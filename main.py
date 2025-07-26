@@ -7,6 +7,7 @@ from datos_y_modelos.src.core.windowing import build_observation_windows
 from src.core.spread_calculator import compute_spreads
 from config import CONFIG
 
+"co"
 import pandas as pd
 import os
 
