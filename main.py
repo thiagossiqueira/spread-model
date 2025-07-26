@@ -45,15 +45,18 @@ if __name__ == "__main__":
     fig = plot_surface_spread_with_bonds(
         df_surface=spread_surface,
         audit=corp_bonds,
-        title="Corporate vs. DI Spread Surface (Filtered Universe with Point-in-Time Yields)"
+        title="Corporate vs. DI Spread Surface (Filtered Universe with Point-in-Time Yields)",
+        zmin=-200,  # controle manual opcional de escala
+        zmax=2000
     )
-
     # ajustável conforme os spreads típicos
     fig.write_html("static/spread_surface.html")
 
     # Gerar tabela
+    # Gerar tabela
     table_fig = show_summary_table(corp_bonds)
-    table_fig.write_html("static/summary_table.html")
+    if table_fig is not None:
+            table_fig.write_html("static/summary_table.html")
 
     # Exportar observações ignoradas
     pd.DataFrame(skipped, columns=["Bond ID", "Obs Date", "Reason"]).to_csv("data/skipped_yields.csv", index=False)
