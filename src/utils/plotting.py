@@ -2,9 +2,14 @@
 import plotly.graph_objects as go
 import pandas as pd
 
-def plot_surface_spread_with_bonds(df_surface: pd.DataFrame, audit: pd.DataFrame, title: str):
-    zmin = audit["SPREAD"].min()
-    zmax = audit["SPREAD"].max()
+def plot_surface_spread_with_bonds(df_surface: pd.DataFrame,
+                                   audit: pd.DataFrame,
+                                   title: str,
+                                   zmin: float = None,
+                                   zmax: float = None):
+
+    cmin = zmin if zmin is not None else audit["SPREAD"].min(),
+    cmax = zmax if zmax is not None else audit["SPREAD"].max(),
 
     fig = go.Figure()
     fig.add_trace(go.Surface(

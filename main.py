@@ -45,10 +45,9 @@ if __name__ == "__main__":
     fig = plot_surface_spread_with_bonds(
         df_surface=spread_surface,
         audit=corp_bonds,
-        title="Corporate vs. DI Spread Surface (Filtered Universe with Point-in-Time Yields)",
-        zmin=-200,  # controle manual opcional de escala
-        zmax=2000
+        title="Corporate vs. DI Spread Surface (Filtered Universe with Point-in-Time Yields)"
     )
+
     # ajustável conforme os spreads típicos
     fig.write_html("static/spread_surface.html")
 
