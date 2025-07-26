@@ -23,16 +23,32 @@ if __name__ == "__main__":
     # Cálculo dos spreads
     corp_bonds, skipped = compute_spreads(corp_base, yields_ts, yc_table, obs_windows, CONFIG["TENORS"])
 
-    # Visualizações
-    ordered = list(CONFIG["TENORS"].keys())
-    fig = plot_surface_spread_with_bonds(yc_table[ordered], corp_bonds,
-        "Corporate vs. DI Spread Surface (Filtered Universe with Point-in-Time Yields)")
-    fig.show()
-
-    show_summary_table(corp_bonds)
-
-    # Criar diretório de saída se não existir
+    # Criar diretórios de saída se não existirem
     os.makedirs("data", exist_ok=True)
+    os.makedirs("static", exist_ok=True)
+
+    # Construir matriz de spreads para visualização 3D
+    spread_surface = corp_bonds.pivot(
+        index="OBS_DATE",
+        columns="TENOR_BUCKET",
+        values="SPREAD"
+    ).sort_index()
+
+    # Garantir que as colunas estejam ordenadas por tenor numérico
+    tenor_order = sorted(CONFIG["TENORS"].items(), key=lambda x: x[1])
+    ordered_columns = [k for k, _ in tenor_order if k in spread_surface.columns]
+    spread_surface = spread_surface[ordered_columns]
+
+    # Gerar gráfico
+    fig = plot_surface_spread_with_bonds(spread_surface, corp_bonds,
+        "Corporate vs. DI Spread Surface (Filtered Universe with Point-in-Time Yields)")
+    fig.write_html("static/spread_surface.html")
+
+    # Gerar tabela
+    table_fig = show_summary_table(corp_bonds)
+    table_fig.write_html("static/summary_table.html")
+
+    # Exportar observações ignoradas
     pd.DataFrame(skipped, columns=["Bond ID", "Obs Date", "Reason"]).to_csv("data/skipped_yields.csv", index=False)
 
     print(f"✅ {len(corp_bonds)} spreads calculados. {len(skipped)} observações ignoradas.")
