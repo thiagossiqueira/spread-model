@@ -8,6 +8,7 @@ Proyecto modular para el cálculo y visualización de los spreads entre bonos co
 ### 📁 Estructura del Proyecto
 
 spread-model/
+├── Makefile                     # Atajos para ejecutar, testear e instalar el proyecto
 ├── main.py                      # Genera los datos y visualizaciones
 ├── app.py                       # Aplicación Flask para visualización web
 ├── config.py                    # Parámetros globales y rutas
