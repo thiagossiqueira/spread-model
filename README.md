@@ -1,105 +1,115 @@
-# README.md
+# README 
 
-## 📈 Corporate Bond Spread Model
+'''
+## 📈 Modelo de Spread para Bonos Corporativos
 
-Projeto modular para cálculo e visualização dos spreads entre títulos corporativos brasileiros e a curva DI interpolada, utilizando dados históricos ponto-a-ponto.
+Proyecto modular para el cálculo y visualización de los spreads entre bonos corporativos brasileños y la curva DI interpolada, utilizando datos históricos punto por punto. Incluye integración con **Flask** para visualizar los resultados en el navegador.
 
----
+### 📁 Estructura del Proyecto
 
-
-### 📁 Estrutura do Projeto
-```
 spread-model/
-├── main.py
-├── config.py
-├── pyproject.toml
-├── requirements.txt
-├── .gitignore
+├── main.py                      # Genera los datos y visualizaciones
+├── app.py                       # Aplicación Flask para visualización web
+├── config.py                    # Parámetros globales y rutas
+├── pyproject.toml               # Configuración del proyecto Python
+├── requirements.txt             # Dependencias
+├── .gitignore                   # Archivos ignorados por Git
 ├── README.md
-├── src/
-│   ├── calendars/
-│   │   └── daycounts.py
-│   ├── finmath/
-│   │   └── analytics.py
-│   ├── utils/
-│   │   ├── file_io.py
-│   │   ├── filters.py
-│   │   ├── interpolation.py
-│   │   └── plotting.py
-│   ├── core/
-│   │   ├── spread_calculator.py
-│   │   └── windowing.py
-├── datos_y_modelos/
+│
+├── src/                         # Código fuente modular (instalado vía setup)
+│   ├── calendars/               # Cálculo de fechas hábiles
+│   ├── finmath/                 # Funciones financieras
+│   ├── utils/                   # I/O, interpolación, gráficos
+│   └── core/                    # Cálculo de ventanas y spreads
+│
+├── datos_y_modelos/            # Archivos de datos (no incluidos si son privados)
 │   ├── db/
 │   │   ├── ODA_Comdty.xlsx
 │   │   ├── bsrch.xlsx
 │   │   └── ya.xlsx
 │   └── Domestic/
 │       └── brazil_domestic_corp_db.xlsx
-├── tests/
-│   ├── test_spread_calculator.py
-│   └── test_interpolation.py
+│
+├── static/                      # Gráficos HTML exportados
+│   ├── spread_surface.html
+│   └── summary_table.html
+│
+├── templates/                   # Plantillas para Flask
+│   ├── index.html
+│   ├── spread_iframe.html
+│   └── summary_iframe.html
+│
+├── tests/                       # Pruebas automatizadas con pytest
 └── data/
-    ├── skipped_yields.csv
-    └── visualizations/
-```
+    ├── skipped_yields.csv       # Observaciones ignoradas
+    └── visualizations/          # (opcional) salidas adicionales
+'''
 
 ---
 
-### ⚙️ Instalação
+### ⚙️ Instalación
 Requisitos:
 - Python >= 3.8
 
-Instale as dependências e o projeto no modo desenvolvimento:
+Instalar el proyecto en modo desarrollo:
 ```bash
 pip install -e .
 ```
 
+Instalar también Flask:
+```bash
+pip install flask
+```
+
 ---
 
-### 🚀 Execução
-Execute a análise com:
+### 🚀 Ejecución
+
+#### Para generar los datos y los gráficos HTML:
 ```bash
 python main.py
 ```
 
-Isso irá:
-- Carregar os dados de bonds e curva DI
-- Interpolar os yields para tenores padrão
-- Calcular os spreads históricos entre cada bond e a curva DI
-- Mostrar uma superfície 3D interativa e uma tabela-resumo
-- Exportar observações ignoradas para `data/skipped_yields.csv`
+Esto generará los archivos:
+- `static/spread_surface.html`
+- `static/summary_table.html`
+
+#### Para visualizar en el navegador vía Flask:
+```bash
+python app.py
+```
+Abrir el navegador en `http://127.0.0.1:5000`
 
 ---
 
-### 🧪 Testes
-Execute os testes com `pytest`:
+### 🧪 Pruebas
+Ejecutar pruebas con `pytest`:
 ```bash
 pytest
 ```
 
 ---
 
-### 🔍 Visualizações
+### 🔍 Visualizaciones
 - Gráfico 3D de spreads observados (Plotly Surface)
-- Tabela com comparativo de yields (bond x curva interpolada)
+- Tabla comparativa de yields (bono vs curva DI interpolada)
 
 ---
 
-### 📦 Build e Metadados
-Veja `pyproject.toml` para detalhes de empacotamento e configuração do projeto.
+### 📦 Build y Metadatos
+Ver `pyproject.toml` para detalles de empaquetado y configuración del proyecto.
 
 ---
 
-### 🧹 Arquivos Ignorados
-O projeto inclui `.gitignore` para evitar versionamento de:
-- Dados de saída (`data/`)
-- Ambientes virtuais e caches
-- Artefatos de build e IDEs
+### 🧹 Archivos Ignorados
+El proyecto incluye `.gitignore` para evitar versionar:
+- Datos de salida (`data/`)
+- Entornos virtuales y cachés
+- Artefactos de build e IDEs
 
 ---
 
 ### 👨‍💻 Autor
 Thiago Siqueira – [tsiqueira@hotmail.com](mailto:tsiqueira@hotmail.com)
 
-Para dúvidas ou contribuições, fique à vontade para abrir uma issue ou entrar em contato.
+Para dudas o contribuciones, no dudes en abrir un issue o ponerte en contacto.
