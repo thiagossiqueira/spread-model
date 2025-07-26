@@ -28,11 +28,13 @@ if __name__ == "__main__":
     os.makedirs("static", exist_ok=True)
 
     # Construir matriz de spreads para visualização 3D
-    spread_surface = corp_bonds.pivot(
+    spread_surface = corp_bonds.pivot_table(
         index="OBS_DATE",
         columns="TENOR_BUCKET",
         values="SPREAD"
-    ).sort_index()
+    ,
+    aggfunc="mean"
+).sort_index()
 
     # Garantir que as colunas estejam ordenadas por tenor numérico
     tenor_order = sorted(CONFIG["TENORS"].items(), key=lambda x: x[1])
@@ -40,8 +42,14 @@ if __name__ == "__main__":
     spread_surface = spread_surface[ordered_columns]
 
     # Gerar gráfico
-    fig = plot_surface_spread_with_bonds(spread_surface, corp_bonds,
-        "Corporate vs. DI Spread Surface (Filtered Universe with Point-in-Time Yields)")
+    fig = plot_surface_spread_with_bonds(
+        df_surface=spread_surface,
+        audit=corp_bonds,
+        title="Corporate vs. DI Spread Surface (Filtered Universe with Point-in-Time Yields)",
+        zmin=-200,  # controle manual opcional de escala
+        zmax=2000
+    )
+    # ajustável conforme os spreads típicos
     fig.write_html("static/spread_surface.html")
 
     # Gerar tabela
