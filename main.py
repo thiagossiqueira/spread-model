@@ -3,11 +3,10 @@
 from src.utils.file_io import load_inputs
 from src.utils.interpolation import interpolate_di_surface
 from src.utils.plotting import plot_surface_spread_with_bonds, show_summary_table
-from datos_y_modelos.src.core.windowing import build_observation_windows
+from src.core.windowing import build_observation_windows
 from src.core.spread_calculator import compute_spreads
 from config import CONFIG
 
-"co"
 import pandas as pd
 import os
 
