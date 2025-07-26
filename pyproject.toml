@@ -7,19 +7,20 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "spread-model"
 version = "0.1.0"
-description = "Cálculo de spreads entre curva DI e bonds corporativos"
+description = "Cálculo y visualización de spreads de bonos corporativos vs curva DI"
 authors = [
-    { name="Thiago Siqueira", email="tsiqueira@hotmail.com" }
+    { name = "Thiago Siqueira", email = "tsiqueira@hotmail.com" }
 ]
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
-    "pandas",
-    "numpy",
-    "scipy",
-    "plotly",
-    "openpyxl",
-    "pytest"
+    "pandas>=1.5",
+    "numpy>=1.21",
+    "scipy>=1.7",
+    "plotly>=5.10",
+    "openpyxl>=3.0",
+    "pytest>=6.0",
+    "flask>=2.0"
 ]
 
 [tool.setuptools]
@@ -29,6 +30,4 @@ packages = ["calendars", "finmath", "core", "utils"]
 [tool.pytest.ini_options]
 minversion = "6.0"
 addopts = "-ra -q"
-testpaths = [
-    "tests"
-]
+testpaths = ["tests"]
