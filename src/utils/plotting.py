@@ -78,5 +78,5 @@ def show_summary_table(corp_bonds_df: pd.DataFrame):
         height=600
     )
 
-    table_fig.show()
+    #table_fig.show()
     return table_fig
