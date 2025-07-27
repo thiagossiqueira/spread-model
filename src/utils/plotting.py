@@ -79,3 +79,4 @@ def show_summary_table(corp_bonds_df: pd.DataFrame):
     )
 
     table_fig.show()
+    return table_fig
