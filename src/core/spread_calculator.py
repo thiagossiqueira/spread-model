@@ -1,7 +1,7 @@
 # core/spread_calculator.py
 import numpy as np
 import pandas as pd
-from src.utils.interpolation import interpolate_yield_for_tenor
+from utils.interpolation import interpolate_yield_for_tenor
 
 def compute_spreads(corp_base, yields_ts, yc_table, observation_periods, tenors_dict):
     expanded_rows = []
