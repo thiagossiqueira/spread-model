@@ -5,7 +5,7 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
-  workflow_dispatch:  # permite execução manual pelo GitHub
+  workflow_dispatch:
 
 jobs:
   test:
@@ -27,4 +27,4 @@ jobs:
 
       - name: Executa os testes com pytest
         run: |
-          pytest
+          PYTHONPATH=src pytest
