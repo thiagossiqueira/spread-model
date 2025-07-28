@@ -1,7 +1,7 @@
 # tests/test_spread_calculator.py
 import pytest
 import pandas as pd
-from src.core.spread_calculator import compute_spreads
+from core.spread_calculator import compute_spreads
 
 
 @pytest.fixture

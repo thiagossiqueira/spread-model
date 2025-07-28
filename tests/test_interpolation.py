@@ -1,7 +1,7 @@
 # tests/test_interpolation.py
 import numpy as np
 import pandas as pd
-from src.utils.interpolation import interpolate_di_surface, interpolate_yield_for_tenor
+from utils.interpolation import interpolate_di_surface, interpolate_yield_for_tenor
 
 def test_interpolate_di_surface_linear():
     surface = pd.DataFrame({
