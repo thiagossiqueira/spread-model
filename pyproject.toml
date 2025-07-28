@@ -25,7 +25,10 @@ dependencies = [
 
 [tool.setuptools]
 package-dir = {"" = "src"}
-packages = ["calendars", "finmath", "core", "utils"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
 
 [tool.pytest.ini_options]
 minversion = "6.0"
