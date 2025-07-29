@@ -14,7 +14,7 @@ def filter_corporate_universe(df: pd.DataFrame) -> pd.DataFrame:
     df = df[df['CPN_TYP'].isin(['FIXED'])]
     df = df[df['MTY_TYP'].isin(['AT MATURITY'])]
     df = df[df['CRNCY'].isin(['BRL'])]
-    df = df[df['INFLATION_LINKED_INDICATOR'].isin(['Y'])]
+    df = df[df['INFLATION_LINKED_INDICATOR'].isin(['N'])] # Changing from Y to N in order to filter the Zero Coupon ones only
     df['TOT_DEBT_TO_EBITDA'] = pd.to_numeric(df['TOT_DEBT_TO_EBITDA'], errors='coerce')
     df = df[df['TOT_DEBT_TO_EBITDA'].notna()]
     df["MATURITY"] = pd.to_datetime(df["MATURITY"])

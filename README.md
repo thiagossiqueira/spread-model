@@ -43,10 +43,15 @@ spread-model/
 │   ├── spread_iframe.html
 │   └── summary_iframe.html
 │
-├── tests/                       # Pruebas automatizadas con pytest
+├── .github                      # Configuración de integración continua (CI)
+│   └── workflows/
+│       └── pytest.yml           # Workflow de GitHub Actions para ejecutar pytest automáticamente
+│
+├── tests/                       # Pruebas unitarias con pytest
 └── data/
     ├── skipped_yields.csv       # Observaciones ignoradas
-    └── visualizations/          # (opcional) salidas adicionales
+    └── visualizaciones/         # (opcional) salidas adicionales
+
 '''
 
 ---
