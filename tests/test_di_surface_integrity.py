@@ -1,5 +1,5 @@
 import pandas as pd
-from src.config import CONFIG
+from config import CONFIG
 from src.utils.file_io import load_inputs
 
 def test_taxas_e_terms_corretos_para_2025_06_30():
