@@ -2,6 +2,9 @@
 import numpy as np
 import pandas as pd
 from utils.interpolation import interpolate_yield_for_tenor
+from calendars.daycounts import DayCounts
+
+DAYCOUNT = DayCounts("bus/252", calendar="cdr_anbima")
 
 def compute_spreads(corp_base, yields_ts, yc_table, observation_periods, tenors_dict):
     expanded_rows = []
@@ -26,8 +29,7 @@ def compute_spreads(corp_base, yields_ts, yc_table, observation_periods, tenors_
                 skipped.append((bond_id, obs_date, "NaN yield"))
                 continue
 
-            days_to_mat = (bond["MATURITY"] - obs_date).days
-            tenor_yrs = days_to_mat / 365.25
+            tenor_yrs = DAYCOUNT.diff_in_years(start=obs_date, end=bond["MATURITY"])
             if tenor_yrs <= 0:
                 continue
 
@@ -43,7 +45,7 @@ def compute_spreads(corp_base, yields_ts, yc_table, observation_periods, tenors_
                 "SPREAD": spread,
                 "CPN_TYP": "Corp bond",
                 "CPN": np.nan,
-                "DAYS_TO_MATURITY": days_to_mat,
+                "DAYS_TO_MATURITY": (bond["MATURITY"] - obs_date).days,
                 "TENOR_YRS": tenor_yrs,
             })
 
