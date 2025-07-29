@@ -2,7 +2,8 @@
 import numpy as np
 import pandas as pd
 from utils.interpolation import interpolate_di_surface, interpolate_yield_for_tenor
-from finmath.curve_models import flat_forward_interpolation
+from finmath.termstructure.curve_models import flat_forward_interpolation
+
 
 def test_interpolate_di_surface_flat_forward():
     surface = pd.DataFrame({
