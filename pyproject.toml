@@ -20,7 +20,8 @@ dependencies = [
     "plotly>=5.10",
     "openpyxl>=3.0",
     "pytest>=6.0",
-    "flask>=2.0"
+    "flask>=2.0",
+    "matplotlib>=3.0"
 ]
 
 [tool.setuptools]
@@ -28,7 +29,6 @@ package-dir = {"" = "src"}
 
 [tool.setuptools.packages.find]
 where = ["src"]
-
 
 [tool.pytest.ini_options]
 minversion = "6.0"
