@@ -1,7 +1,7 @@
 # utils/interpolation.py
 import numpy as np
 import pandas as pd
-from finmath.curve_models import flat_forward_interpolation
+from finmath.termstructure.curve_models import flat_forward_interpolation
 
 def interpolate_di_surface(surface: pd.DataFrame, tenors: dict) -> pd.DataFrame:
     rows = []
