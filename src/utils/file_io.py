@@ -1,6 +1,6 @@
 # utils/file_io.py
 import pandas as pd
-from config import CONFIG
+
 
 def load_di_futures(path):
     df = pd.read_excel(path, sheet_name="periods_values_only")

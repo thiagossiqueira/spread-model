@@ -1,14 +1,11 @@
 import pandas as pd
-import numpy as np
-from config import CONFIG
+from src.config import CONFIG
 from src.utils.file_io import load_inputs
-from src.utils.interpolation import interpolate_di_surface
 
 def test_taxas_e_terms_corretos_para_2025_06_30():
     surface, _, _ = load_inputs(CONFIG)
     surface = surface[surface["obs_date"] == pd.Timestamp("2025-06-30")]
 
-    # Taxas esperadas extraídas manualmente
     tickers = [
         f"od{i} Comdty" for i in list(range(1, 14)) + [16, 17, 18, 19, 21, 22, 23, 24, 25,
                                                        26, 27, 28, 29, 30, 31, 32, 34, 35, 36, 37, 38, 39, 40, 41, 42]
@@ -27,7 +24,6 @@ def test_taxas_e_terms_corretos_para_2025_06_30():
 
     assert len(tickers) == len(taxas_esperadas) == len(terms_esperados)
 
-    # Verificações
     for ticker, taxa, term in zip(tickers, taxas_esperadas, terms_esperados):
         linha = surface[surface["id"] == ticker]
         assert not linha.empty, f"Ticker {ticker} não encontrado"

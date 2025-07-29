@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from config import CONFIG
+from src.config import CONFIG
 from src.utils.file_io import load_inputs
 from src.utils.interpolation import interpolate_di_surface
 from scipy.interpolate import interp1d

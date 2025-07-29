@@ -5,7 +5,7 @@ from src.utils.interpolation import interpolate_di_surface
 from src.utils.plotting import plot_surface_spread_with_bonds, show_summary_table
 from src.core.windowing import build_observation_windows
 from src.core.spread_calculator import compute_spreads
-from config import CONFIG
+from src.config import CONFIG
 
 import pandas as pd
 import os
