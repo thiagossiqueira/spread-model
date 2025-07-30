@@ -20,9 +20,9 @@ def test_taxas_e_terms_corretos_para_2025_06_30():
         13.265, 13.286, 13.274, 13.289, 13.264, 13.243, 13.19, 13.137
     ]
     terms_esperados = [
-        0.1, 0.2, 0.3, 0.3, 0.4, 0.5, 0.6, 0.7, 0.7, 0.8, 0.9, 1.0, 1.1,
-        1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 2.3, 2.4,
-        2.5, 2.6, 2.7, 2.8, 2.9, 3.0, 3.1, 3.2, 3.2, 3.3, 3.4, 3.5
+        0.0873, 0.1746, 0.2619, 0.3492, 0.4286, 0.5119, 0.5992, 0.6706, 0.7540, 0.8373, 0.9167, 1.0, 1.0873,
+        1.3413, 1.4167, 1.5, 1.5833, 1.7381, 1.8254, 1.9008, 1.9921, 2.0794, 2.1627, 2.25, 2.3294, 2.4087,
+        2.4960, 2.5794, 2.6587, 2.8214, 2.9048, 2.9921, 3.0714, 3.1627, 3.2460, 3.3254, 3.4048, 3.4841
     ]
 
     assert len(tickers) == len(taxas_esperadas) == len(terms_esperados)
@@ -34,4 +34,4 @@ def test_taxas_e_terms_corretos_para_2025_06_30():
         dias_uteis = linha["tenor"].iloc[0]
         term_encontrado = dias_uteis / 252.0
         assert round(taxa_encontrada, 3) == round(taxa, 3), f"Taxa incorreta para {ticker}"
-        assert round(term_encontrado, 2) == round(term, 2), f"Term incorreto para {ticker}"
+        assert round(term_encontrado, 4) == round(term, 4), f"Term incorreto para {ticker}"
