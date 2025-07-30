@@ -41,10 +41,11 @@ def load_inputs(config):
         "px_last": "yield"
     })[["obs_date", "id", "yield", "tenor"]].copy()
 
-    # 🔧 Remove duplicatas antes da interpolação
-    surface = surface.drop_duplicates(subset=["obs_date", "id"])
     surface = surface.dropna(subset=["yield", "tenor"])
     surface = surface[surface["yield"] > 0]
+
+    # 🔧 Remove duplicatas por data e ticker (mantém a última)
+    surface = surface.drop_duplicates(subset=["obs_date", "id"], keep="last")
 
     # Load corporate bond metadata
     corp_data = load_corp_bond_data(config["CORP_PATH"])
