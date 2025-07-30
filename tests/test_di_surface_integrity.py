@@ -1,7 +1,7 @@
 import pandas as pd
 from calendars.daycounts import DayCounts
 from config import CONFIG
-from src.utils.file_io import load_inputs
+from utils.file_io import load_inputs
 
 dc = DayCounts("bus/252", calendar="cdr_anbima")
 
