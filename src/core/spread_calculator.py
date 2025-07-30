@@ -29,7 +29,8 @@ def compute_spreads(corp_base, yields_ts, yc_table, observation_periods, tenors_
                 skipped.append((bond_id, obs_date, "NaN yield"))
                 continue
 
-            tenor_yrs = DAYCOUNT.diff_in_years(start=obs_date, end=bond["MATURITY"])
+            tenor_yrs = DAYCOUNT.tf(obs_date, bond["MATURITY"])
+
             if tenor_yrs <= 0:
                 continue
 
