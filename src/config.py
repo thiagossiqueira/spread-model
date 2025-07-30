@@ -10,8 +10,8 @@ while not (REPO_ROOT / ".git").exists() and REPO_ROOT != REPO_ROOT.parent:
 CONFIG = {
     "CORP_PATH": REPO_ROOT / "datos_y_modelos" / "Domestic" / "brazil_domestic_corp_db.xlsx",
     "YA_PATH": REPO_ROOT / "datos_y_modelos" / "db" / "brazil_domestic_corp_bonds" / "ya.xlsx",
-    "DI_PATH": REPO_ROOT / "datos_y_modelos" / "db" / "one-day_interbank_deposit_futures_contract_di" / "bsrch.xlsx",
-    "YIELD_PATH": REPO_ROOT / "datos_y_modelos" / "db" / "one-day_interbank_deposit_futures_contract_di" / "ODA_Comdty.xlsx",
+    "DI_CURVE_PATH": REPO_ROOT / "datos_y_modelos" / "db" / "one-day_interbank_deposit_futures_contract_di" / "hist_di_curve_contracts_db.xlsx",
+
 
     "TENORS": {
         "13-year": 13.0, "10-year": 10.0, "5-year": 5.0, "3-year": 3.0,

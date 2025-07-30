@@ -30,25 +30,28 @@ def load_corp_bond_data(path):
     return df
 
 def load_inputs(config):
-    bonds_static = load_di_futures(config["DI_PATH"])
-    ylds = load_yield_surface(config["YIELD_PATH"])
-    bonds_key = bonds_static[["Generic ticker", "Curve date", "End of Month days"]]
-    bonds_key = bonds_key.rename(columns={"Curve date": "OBS_DATE"})
+    # Load DI curve data from new consolidated file
+    curve_df = pd.read_excel(config["HIST_CURVE_PATH"], sheet_name="only_values")
+    curve_df["Curve date"] = pd.to_datetime(curve_df["Curve date"])
 
-    long = (
-        ylds.reset_index()
-            .melt(id_vars="OBS_DATE", var_name="Generic ticker", value_name="yield")
-            .dropna(subset=["yield"])
-            .loc[lambda df: df["yield"] > 0]
-    )
-    merged = long.merge(bonds_key, on=["Generic ticker", "OBS_DATE"], how="left")
-    surface = merged.rename(columns={"OBS_DATE": "obs_date", "Generic ticker": "id", "End of Month days": "tenor"})[
-        ["obs_date", "id", "yield", "tenor"]
-    ].reset_index(drop=True)
+    surface = curve_df.rename(columns={
+        "Curve date": "obs_date",
+        "Generic ticker": "id",
+        "Term": "tenor",
+        "px_last": "yield"
+    })[["obs_date", "id", "yield", "tenor"]].copy()
 
+    surface = surface.dropna(subset=["yield", "tenor"])
+    surface = surface[surface["yield"] > 0]
+
+    # Load corporate bond metadata
     corp_data = load_corp_bond_data(config["CORP_PATH"])
+
+    # Load corporate yield time series
     yields_ts = load_yield_surface(config["YA_PATH"])
     yields_ts.columns = yields_ts.columns.astype(str).str.strip()
+
+    # Keep only bonds with matching time series
     corp_data = corp_data[corp_data["id"].isin(yields_ts.columns)]
 
     return surface, corp_data, yields_ts
