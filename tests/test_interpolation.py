@@ -3,12 +3,16 @@ import numpy as np
 import pandas as pd
 from utils.interpolation import interpolate_di_surface, interpolate_yield_for_tenor
 from finmath.termstructure.curve_models import flat_forward_interpolation
+from calendars.daycounts import DayCounts
 
+dc = DayCounts("bus/252", calendar="cdr_anbima")
 
 def test_interpolate_di_surface_flat_forward():
     surface = pd.DataFrame({
         "obs_date": ["2024-01-01"] * 3,
-        "tenor": [1.0, 2.0, 3.0],
+        "tenor": [dc.tf(pd.Timestamp("2024-01-01"), pd.Timestamp("2025-01-01")),
+                   dc.tf(pd.Timestamp("2024-01-01"), pd.Timestamp("2026-01-01")),
+                   dc.tf(pd.Timestamp("2024-01-01"), pd.Timestamp("2027-01-01"))],
         "yield": [10.0, 11.0, 12.0],
         "id": ["X", "Y", "Z"]
     })

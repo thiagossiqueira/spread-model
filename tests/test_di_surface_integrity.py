@@ -1,6 +1,9 @@
 import pandas as pd
-from config import CONFIG
-from utils.file_io import load_inputs
+from calendars.daycounts import DayCounts
+from src.config import CONFIG
+from src.utils.file_io import load_inputs
+
+dc = DayCounts("bus/252", calendar="cdr_anbima")
 
 def test_taxas_e_terms_corretos_para_2025_06_30():
     surface, _, _ = load_inputs(CONFIG)
@@ -27,7 +30,8 @@ def test_taxas_e_terms_corretos_para_2025_06_30():
     for ticker, taxa, term in zip(tickers, taxas_esperadas, terms_esperados):
         linha = surface[surface["id"] == ticker]
         assert not linha.empty, f"Ticker {ticker} não encontrado"
-        taxa_encontrada = float(linha["yield"])
-        term_encontrado = float(linha["tenor"])
+        taxa_encontrada = float(linha["yield"].iloc[0])
+        dias_uteis = linha["tenor"].iloc[0]
+        term_encontrado = dias_uteis / 252.0
         assert round(taxa_encontrada, 3) == round(taxa, 3), f"Taxa incorreta para {ticker}"
         assert round(term_encontrado, 2) == round(term, 2), f"Term incorreto para {ticker}"
