@@ -34,7 +34,9 @@ def compute_spreads(corp_base, yields_ts, yc_table, observation_periods, tenors_
             if tenor_yrs <= 0:
                 continue
 
-            interpolated_di_yield = interpolate_yield_for_tenor(obs_date, yc_table, tenor_yrs, tenors_dict)
+            curve_id = f"{bond_id}{obs_date.strftime('%Y%m%d')}"
+            interpolated_di_yield = interpolate_yield_for_tenor(obs_date, yc_table, tenor_yrs, tenors_dict, curve_id)
+
             spread = yas_yld - interpolated_di_yield
 
             expanded_rows.append({

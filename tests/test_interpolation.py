@@ -44,5 +44,9 @@ def test_interpolate_yield_for_tenor_flat_forward():
     curva = pd.Series([10.0, 11.0, 12.0], index=[1.0, 2.0, 3.0])
     esperado = flat_forward_interpolation(2.5, curva)
 
-    interpolado = interpolate_yield_for_tenor(index[0], yc_table, 2.5, tenors)
+    curve_id = "curve1"
+    yc_table.index = [curve_id]
+
+    interpolado = interpolate_yield_for_tenor(index[0], yc_table, 2.5, tenors, curve_id)
+
     assert np.isclose(interpolado, esperado, atol=1e-3)
