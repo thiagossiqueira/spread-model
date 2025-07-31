@@ -37,7 +37,6 @@ def test_taxas_e_terms_corretos_para_2025_06_30():
         assert curve_id in surface.index, f"curve_id {curve_id} não encontrado"
         linha = surface.loc[[curve_id]]
         taxa_encontrada = float(linha["yield"].iloc[0])
-        dias_uteis = linha["tenor"].iloc[0]
-        term_encontrado = dias_uteis / 252.0
+        term_encontrado = linha["tenor"].iloc[0]
         assert round(taxa_encontrada, 4) == round(taxa, 4), f"Taxa incorreta para {ticker}"
         assert round(term_encontrado, 4) == round(term, 4), f"Term incorreto para {ticker}"
