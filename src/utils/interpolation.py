@@ -26,7 +26,10 @@ def interpolate_di_surface(surface: pd.DataFrame, tenors: dict) -> pd.DataFrame:
     result.reset_index(inplace=True)  # <- garante que 'curve_id' seja coluna para merge posterior
     return result
 
+
 def interpolate_yield_for_tenor(obs_date, yc_table, target_tenor, tenors, curve_id):
     di_row = yc_table.loc[curve_id]
-    curva = pd.Series(di_row.values, index=[tenors[k] for k in di_row.index if k != "obs_date"])
+    if "obs_date" in di_row.index:
+        di_row = di_row.drop("obs_date")
+    curva = pd.Series(di_row.values, index=[tenors[k] for k in di_row.index])
     return flat_forward_interpolation(target_tenor, curva)
