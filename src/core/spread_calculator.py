@@ -11,13 +11,13 @@ def compute_spreads(corp_base, yields_ts, yc_table, observation_periods, tenors_
     skipped = []
 
     for _, bond in corp_base.iterrows():
-        bond_id = bond["id"]
+        bond_id = bond["generic_ticker_id"]
         obs_start, obs_end = observation_periods.get(bond_id, (None, None))
         if obs_start is None:
             continue
 
         for curve_id in yc_table.index:
-            obs_date_str = curve_id[-8:]  # extrai parte final da string, como "20250101"
+            obs_date_str = curve_id[-8:]
             obs_date = pd.to_datetime(obs_date_str, format="%Y%m%d")
 
             if not (obs_start <= obs_date <= obs_end):
@@ -37,9 +37,7 @@ def compute_spreads(corp_base, yields_ts, yc_table, observation_periods, tenors_
             if tenor_yrs <= 0:
                 continue
 
-            curve_id = f"{bond_id}{obs_date.strftime('%Y%m%d')}"
             interpolated_di_yield = interpolate_yield_for_tenor(obs_date, yc_table, tenor_yrs, tenors_dict, curve_id)
-
 
             spread = yas_yld - interpolated_di_yield
 

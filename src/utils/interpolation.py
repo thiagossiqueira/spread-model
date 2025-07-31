@@ -1,12 +1,10 @@
-# utils/interpolation.py
-
 import numpy as np
 import pandas as pd
 from finmath.termstructure.curve_models import flat_forward_interpolation
 
 def interpolate_di_surface(surface: pd.DataFrame, tenors: dict) -> pd.DataFrame:
     surface = surface.copy()
-    surface["curve_id"] = surface["id"] + surface["obs_date"].dt.strftime("%Y%m%d")
+    surface["curve_id"] = surface["generic_ticker_id"] + surface["obs_date"].dt.strftime("%Y%m%d")
 
     rows = []
     for curve_id, grp in surface.groupby("curve_id"):
@@ -25,12 +23,10 @@ def interpolate_di_surface(surface: pd.DataFrame, tenors: dict) -> pd.DataFrame:
 
     result = pd.DataFrame(rows).sort_values("curve_id").dropna(how="any")
     result.set_index("curve_id", inplace=True)
-    result.reset_index(inplace=True)  # <--  garante que 'curve_id' seja coluna
+    result.reset_index(inplace=True)  # <- garante que 'curve_id' seja coluna para merge posterior
     return result
-
 
 def interpolate_yield_for_tenor(obs_date, yc_table, target_tenor, tenors, curve_id):
     di_row = yc_table.loc[curve_id]
-    curva = pd.Series(di_row.values, index=[tenors[k] for k in di_row.index])
+    curva = pd.Series(di_row.values, index=[tenors[k] for k in di_row.index if k != "obs_date"])
     return flat_forward_interpolation(target_tenor, curva)
-
