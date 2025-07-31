@@ -25,7 +25,13 @@ def test_interpolate_di_surface_flat_forward():
 
     assert not result.empty
     assert result.index.name == "curve_id"
-    assert result.shape[0] == 3  # três curvas, uma para cada id
+    assert result.shape[0] == surface["id"].nunique()
+
+    curva = pd.Series([10.0, 11.0, 12.0], index=[1.0, 2.0, 3.0])
+    esperado = flat_forward_interpolation(2.5, curva)
+
+    for val in result["2.5-year"]:
+        assert np.isclose(val, esperado, atol=1e-3)
 
 
 def test_interpolate_yield_for_tenor_flat_forward():
