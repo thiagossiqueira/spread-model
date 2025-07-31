@@ -20,19 +20,21 @@ def test_interpolate_di_surface_flat_forward():
         "id": ["X", "Y", "Z"]
     })
 
+    # Novo identificador único
+    surface["curve_id"] = surface["id"] + surface["obs_date"].dt.strftime("%Y%m%d")
+
     tenors = {"1-year": 1.0, "2-year": 2.0, "3-year": 3.0, "2.5-year": 2.5}
     result = interpolate_di_surface(surface, tenors)
 
     assert not result.empty
-    assert result.shape[0] == 3  # cada curva_id é única agora
+    assert result.shape[0] == surface["curve_id"].nunique()  # flexível ao tamanho
 
-    # Validar com interpolação flat-forward diretamente
     curva = pd.Series([10.0, 11.0, 12.0], index=[1.0, 2.0, 3.0])
     esperado = flat_forward_interpolation(2.5, curva)
 
-    # encontrar a linha correspondente
-    row = result[result.index.str.contains("X")].iloc[0]
-    assert np.isclose(row["2.5-year"], esperado, atol=1e-3)
+    for val in result["2.5-year"]:
+        assert np.isclose(val, esperado, atol=1e-3)
+
 
 def test_interpolate_yield_for_tenor_flat_forward():
     index = pd.to_datetime(["2024-01-01"])
