@@ -14,14 +14,14 @@ if __name__ == "__main__":
     # Carregar os dados
     surface, corp_base, yields_ts = load_inputs(CONFIG)
 
-    # Interpolação da curva DI
-    yc_table = interpolate_di_surface(surface, CONFIG["TENORS"])
+    # Interpolação da curva DI (agora com reset_index para ter 'curve_id' como coluna)
+    yc_table = interpolate_di_surface(surface, CONFIG["TENORS"]).reset_index()
 
     # Janelas de observação para cada título
     obs_windows = build_observation_windows(corp_base, yields_ts, CONFIG["OBS_WINDOW"])
 
     # Cálculo dos spreads
-    corp_bonds, skipped = compute_spreads(corp_base, yields_ts, yc_table, obs_windows, CONFIG["TENORS"])
+    corp_bonds, skipped = compute_spreads(corp_base, yields_ts, yc_table.set_index("curve_id"), obs_windows, CONFIG["TENORS"])
 
     # Criar diretórios de saída se não existirem
     os.makedirs("data", exist_ok=True)
@@ -31,10 +31,9 @@ if __name__ == "__main__":
     spread_surface = corp_bonds.pivot_table(
         index="OBS_DATE",
         columns="TENOR_BUCKET",
-        values="SPREAD"
-    ,
-    aggfunc="mean"
-).sort_index()
+        values="SPREAD",
+        aggfunc="mean"
+    ).sort_index()
 
     # Garantir que as colunas estejam ordenadas por tenor numérico
     tenor_order = sorted(CONFIG["TENORS"].items(), key=lambda x: x[1])
@@ -49,14 +48,12 @@ if __name__ == "__main__":
         zmin=-200,  # controle manual opcional de escala
         zmax=2000
     )
-    # ajustável conforme os spreads típicos
     fig.write_html("static/spread_surface.html")
 
     # Gerar tabela
-    # Gerar tabela
     table_fig = show_summary_table(corp_bonds)
     if table_fig is not None:
-            table_fig.write_html("static/summary_table.html")
+        table_fig.write_html("static/summary_table.html")
 
     # Exportar observações ignoradas
     pd.DataFrame(skipped, columns=["Bond ID", "Obs Date", "Reason"]).to_csv("data/skipped_yields.csv", index=False)
