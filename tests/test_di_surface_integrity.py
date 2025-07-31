@@ -8,6 +8,7 @@ dc = DayCounts("bus/252", calendar="cdr_anbima")
 def test_taxas_e_terms_corretos_para_2025_06_30():
     surface, _, _ = load_inputs(CONFIG)
     surface = surface[surface["obs_date"] == pd.Timestamp("2025-06-30")]
+    surface["curve_id"] = surface["id"] + surface["obs_date"].dt.strftime("%Y%m%d")
 
     tickers = [
         f"od{i} Comdty" for i in list(range(1, 14)) + [16, 17, 18, 19, 21, 22, 23, 24, 25,
@@ -29,8 +30,9 @@ def test_taxas_e_terms_corretos_para_2025_06_30():
     assert len(tickers) == len(taxas_esperadas) == len(terms_esperados)
 
     for ticker, taxa, term in zip(tickers, taxas_esperadas, terms_esperados):
-        linha = surface[surface["id"] == ticker]
-        assert not linha.empty, f"Ticker {ticker} não encontrado"
+        curve_id = ticker + "20250630"
+        linha = surface[surface["curve_id"] == curve_id]
+        assert not linha.empty, f"curve_id {curve_id} não encontrado"
         taxa_encontrada = float(linha["yield"].iloc[0])
         dias_uteis = linha["tenor"].iloc[0]
         term_encontrado = dias_uteis / 252.0
