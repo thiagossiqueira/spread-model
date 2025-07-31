@@ -8,10 +8,12 @@ dc = DayCounts("bus/252", calendar="cdr_anbima")
 def test_taxas_e_terms_corretos_para_2025_06_30():
     surface, _, _ = load_inputs(CONFIG)
 
-    # Certificar-se de que os campos estão corretamente configurados
-    surface = surface.reset_index(drop=True)  # garantir que não há index antigo
+    # Corrigir nome da coluna para refletir renomeação feita em file_io.py
+    surface = surface.rename(columns={"generic_ticker_id": "id"})
+
+    surface = surface.reset_index(drop=True)
     surface = surface[surface["obs_date"] == pd.Timestamp("2025-06-30")].copy()
-    surface["curve_id"] = surface["generic_ticker_id"] + surface["obs_date"].dt.strftime("%Y%m%d")
+    surface["curve_id"] = surface["id"] + surface["obs_date"].dt.strftime("%Y%m%d")
     surface = surface.set_index("curve_id")
 
     tickers = [
@@ -36,7 +38,7 @@ def test_taxas_e_terms_corretos_para_2025_06_30():
     for ticker, taxa, term in zip(tickers, taxas_esperadas, terms_esperados):
         curve_id = ticker + "20250630"
         assert curve_id in surface.index, f"curve_id {curve_id} não encontrado"
-        linha = surface.loc[[curve_id]]  # <-- fix to preserve dataframe shape
+        linha = surface.loc[[curve_id]]
         taxa_encontrada = float(linha["yield"].iloc[0])
         dias_uteis = linha["tenor"].iloc[0]
         term_encontrado = dias_uteis / 252.0
