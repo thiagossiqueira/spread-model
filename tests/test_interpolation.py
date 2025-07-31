@@ -25,7 +25,7 @@ def test_interpolate_di_surface_flat_forward():
     result = interpolate_di_surface(surface, tenors)
 
     assert not result.empty
-    assert result["curve_id"].is_unique  # verifica unicidade do identificador
+    assert result.index.is_unique  # verifica unicidade do identificador
 
     curva = pd.Series([10.0, 11.0, 12.0], index=[1.0, 2.0, 3.0])
     esperado = flat_forward_interpolation(2.5, curva)
