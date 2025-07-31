@@ -1,4 +1,3 @@
-# tests/test_di_surface_integrity.py
 import pandas as pd
 from calendars.daycounts import DayCounts
 from config import CONFIG
@@ -12,7 +11,7 @@ def test_taxas_e_terms_corretos_para_2025_06_30():
     # Certificar-se de que os campos estão corretamente configurados
     surface = surface.reset_index(drop=True)  # garantir que não há index antigo
     surface = surface[surface["obs_date"] == pd.Timestamp("2025-06-30")].copy()
-    surface["curve_id"] = surface["id"] + surface["obs_date"].dt.strftime("%Y%m%d")
+    surface["curve_id"] = surface["generic_ticker_id"] + surface["obs_date"].dt.strftime("%Y%m%d")
     surface = surface.set_index("curve_id")
 
     tickers = [
