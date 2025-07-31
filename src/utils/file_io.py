@@ -44,7 +44,15 @@ def load_inputs(config):
     surface = surface.dropna(subset=["yield", "tenor"])
     surface = surface[surface["yield"] > 0]
 
-    # 🔧 Remove duplicatas por data e ticker (mantém a última)
+    # Diagnóstico: verificar duplicatas antes do drop_duplicates
+    dups = surface[surface.duplicated(subset=["obs_date", "id"], keep=False)]
+    if not dups.empty:
+        print("\n🚨 Duplicatas encontradas na curva DI consolidada:")
+        print(f"📄 Arquivo: {config['HIST_CURVE_PATH']}")
+        print(dups.sort_values(["obs_date", "id"]))
+        raise ValueError("❌ Ainda há duplicatas em ['obs_date', 'id'] antes do drop_duplicates.")
+
+    # Remove duplicatas por data e ticker, se ainda houver
     surface = surface.drop_duplicates(subset=["obs_date", "id"], keep="last")
 
     # Load corporate bond metadata
