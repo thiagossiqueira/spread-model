@@ -1,3 +1,4 @@
+# tests/test_di_surface_integrity.py
 import pandas as pd
 from calendars.daycounts import DayCounts
 from config import CONFIG
@@ -8,9 +9,7 @@ dc = DayCounts("bus/252", calendar="cdr_anbima")
 def test_taxas_e_terms_corretos_para_2025_06_30():
     surface, _, _ = load_inputs(CONFIG)
     surface = surface[surface["obs_date"] == pd.Timestamp("2025-06-30")]
-    surface = surface.reset_index()  # necessário pois curve_id está no índice
-    surface["curve_id"] = surface["id"] + surface["obs_date"].dt.strftime("%Y%m%d")
-    surface = surface.set_index("curve_id")
+    surface = surface.copy()  # já está com curve_id como índice
 
     tickers = [
         f"od{i} Comdty" for i in list(range(1, 14)) + [16, 17, 18, 19, 21, 22, 23, 24, 25,
@@ -33,10 +32,10 @@ def test_taxas_e_terms_corretos_para_2025_06_30():
 
     for ticker, taxa, term in zip(tickers, taxas_esperadas, terms_esperados):
         curve_id = ticker + "20250630"
-        linha = surface.loc[[curve_id]]
-        assert not linha.empty, f"curve_id {curve_id} não encontrado"
-        taxa_encontrada = float(linha["yield"].iloc[0])
-        dias_uteis = linha["tenor"].iloc[0]
+        assert curve_id in surface.index, f"curve_id {curve_id} não encontrado"
+        linha = surface.loc[curve_id]
+        taxa_encontrada = float(linha["yield"])
+        dias_uteis = linha["tenor"]
         term_encontrado = dias_uteis / 252.0
         assert round(taxa_encontrada, 4) == round(taxa, 4), f"Taxa incorreta para {ticker}"
         assert round(term_encontrado, 4) == round(term, 4), f"Term incorreto para {ticker}"
