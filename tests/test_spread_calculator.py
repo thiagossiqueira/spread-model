@@ -10,7 +10,7 @@ DAYCOUNT = DayCounts("bus/252", calendar="cdr_anbima")
 def test_compute_spread_positive():
     # Simula base de dados de 1 bond
     corp_base = pd.DataFrame({
-        "id": ["BOND1"],
+        "generic_ticker_id": ["BOND1"],
         "MATURITY": [pd.Timestamp("2026-01-01")]
     })
 
