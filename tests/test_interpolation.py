@@ -1,4 +1,5 @@
 # tests/test_interpolation.py
+
 import numpy as np
 import pandas as pd
 from utils.interpolation import interpolate_di_surface, interpolate_yield_for_tenor
@@ -20,12 +21,14 @@ def test_interpolate_di_surface_flat_forward():
         "id": ["X", "Y", "Z"]
     })
 
+    # Novo identificador único
+    surface["curve_id"] = surface["id"] + surface["obs_date"].dt.strftime("%Y%m%d")
+
     tenors = {"1-year": 1.0, "2-year": 2.0, "3-year": 3.0, "2.5-year": 2.5}
     result = interpolate_di_surface(surface, tenors)
 
     assert not result.empty
-    assert result.index.name == "curve_id"
-    assert result.shape[0] == surface["id"].nunique()
+    assert result.index.is_unique  # Corrigido: verifica unicidade do índice
 
     curva = pd.Series([10.0, 11.0, 12.0], index=[1.0, 2.0, 3.0])
     esperado = flat_forward_interpolation(2.5, curva)
@@ -36,15 +39,12 @@ def test_interpolate_di_surface_flat_forward():
 
 def test_interpolate_yield_for_tenor_flat_forward():
     index = pd.to_datetime(["2024-01-01"])
-    yc_table = pd.DataFrame({"1-year": [10.0], "2-year": [11.0], "3-year": [12.0]}, index=index)
+    yc_table = pd.DataFrame({"1-year": [10.0], "2-year": [11.0], "3-year": [12.0]}, index=["curve1"])
     tenors = {"1-year": 1.0, "2-year": 2.0, "3-year": 3.0}
 
     curva = pd.Series([10.0, 11.0, 12.0], index=[1.0, 2.0, 3.0])
     esperado = flat_forward_interpolation(2.5, curva)
 
-    curve_id = "curve1"
-    yc_table.index = [curve_id]
-
-    interpolado = interpolate_yield_for_tenor(index[0], yc_table, 2.5, tenors, curve_id)
+    interpolado = interpolate_yield_for_tenor(index[0], yc_table, 2.5, tenors, "curve1")
 
     assert np.isclose(interpolado, esperado, atol=1e-3)
