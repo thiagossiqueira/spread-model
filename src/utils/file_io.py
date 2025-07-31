@@ -1,7 +1,6 @@
 # utils/file_io.py
 import pandas as pd
 
-
 def load_di_futures(path):
     df = pd.read_excel(path, sheet_name="periods_values_only")
     df["End of Month date"] = pd.to_datetime(df["End of Month date"])
@@ -36,15 +35,14 @@ def load_inputs(config):
 
     surface = curve_df.rename(columns={
         "Curve date": "obs_date",
-        "Generic ticker": "id",
+        "Generic ticker": "generic_ticker_id",
         "Term": "tenor",
         "px_last": "yield"
-    })[["obs_date", "id", "yield", "tenor"]].copy()
-
+    })[["obs_date", "generic_ticker_id", "yield", "tenor"]].copy()
 
     surface = surface.dropna(subset=["yield", "tenor"])
     surface = surface[surface["yield"] > 0]
-    surface["curve_id"] = surface["id"] + surface["obs_date"].dt.strftime("%Y%m%d")
+    surface["curve_id"] = surface["generic_ticker_id"] + surface["obs_date"].dt.strftime("%Y%m%d")
     surface = surface.drop_duplicates(subset=["curve_id"], keep="last")
 
     # Load corporate bond metadata
