@@ -8,8 +8,12 @@ dc = DayCounts("bus/252", calendar="cdr_anbima")
 
 def test_taxas_e_terms_corretos_para_2025_06_30():
     surface, _, _ = load_inputs(CONFIG)
-    surface = surface[surface["obs_date"] == pd.Timestamp("2025-06-30")]
-    surface = surface.copy()  # já está com curve_id como índice
+
+    # Certificar-se de que os campos estão corretamente configurados
+    surface = surface.reset_index(drop=True)  # garantir que não há index antigo
+    surface = surface[surface["obs_date"] == pd.Timestamp("2025-06-30")].copy()
+    surface["curve_id"] = surface["id"] + surface["obs_date"].dt.strftime("%Y%m%d")
+    surface = surface.set_index("curve_id")
 
     tickers = [
         f"od{i} Comdty" for i in list(range(1, 14)) + [16, 17, 18, 19, 21, 22, 23, 24, 25,
