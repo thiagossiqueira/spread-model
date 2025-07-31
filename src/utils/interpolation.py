@@ -23,8 +23,10 @@ def interpolate_di_surface(surface: pd.DataFrame, tenors: dict) -> pd.DataFrame:
             **{k: flat_forward_interpolation(t, curva) for k, t in tenors.items()}
         })
 
-    return pd.DataFrame(rows).set_index("curve_id").sort_index().dropna(how="any")
-
+    result = pd.DataFrame(rows).sort_values("curve_id").dropna(how="any")
+    result.set_index("curve_id", inplace=True)
+    result.reset_index(inplace=True)  # <--  garante que 'curve_id' seja coluna
+    return result
 
 
 def interpolate_yield_for_tenor(obs_date, yc_table, target_tenor, tenors, curve_id):
