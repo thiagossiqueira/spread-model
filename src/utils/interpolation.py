@@ -10,7 +10,7 @@ def interpolate_di_surface(surface: pd.DataFrame, tenors: dict) -> pd.DataFrame:
     for curve_id, grp in surface.groupby("curve_id"):
         grp = grp.drop_duplicates(subset="tenor").sort_values("tenor")
         if grp["tenor"].nunique() < 2:
-            continue
+            continue  # ignora curvas com menos de 2 pontos
         x = grp["tenor"].to_numpy()
         y = grp["yield"].to_numpy()
         curva = pd.Series(y, index=x)
@@ -21,10 +21,13 @@ def interpolate_di_surface(surface: pd.DataFrame, tenors: dict) -> pd.DataFrame:
             **{k: flat_forward_interpolation(t, curva) for k, t in tenors.items()}
         })
 
-    result = pd.DataFrame(rows).sort_values("curve_id").dropna(how="any")
-    result.set_index("curve_id", inplace=True)
-    result.reset_index(inplace=True)  # <- garante que 'curve_id' seja coluna para merge posterior
+    result = pd.DataFrame(rows)
+    if result.empty:
+        raise ValueError("interpolate_di_surface() retornou DataFrame vazio!")
+
+    result = result.set_index("curve_id").sort_index()
     return result
+
 
 
 def interpolate_yield_for_tenor(obs_date, yc_table, target_tenor, tenors, curve_id):
