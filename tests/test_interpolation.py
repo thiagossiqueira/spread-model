@@ -10,27 +10,42 @@ dc = DayCounts("bus/252", calendar="cdr_anbima")
 
 
 def test_interpolate_di_surface_flat_forward():
-    ref_date = pd.Timestamp("2025-06-30")
-
+    ref_date = pd.Timestamp("2025-04-30")
     surface = pd.DataFrame({
-        "obs_date": [ref_date] * 3,
-        "tenor": [1.087302, 1.341270, 1.583333],
-        "yield": [14.675, 14.396, 13.607],
-        "generic_ticker_id": ["od13 Comdty", "od16 Comdty", "od19 Comdty"]
+        "obs_date": [ref_date] * 9,
+        "tenor": [
+            0.833333333, 0.837301587, 0.837301587,  # od10 Comdty
+            1.079365079, 1.079365079, 1.087301587,  # od13 Comdty
+            1.579365079, 1.583333333, 1.583333333   # od19 Comdty
+        ],
+        "yield": [
+            14.634, 14.770, 14.861,
+            14.459, 14.629, 14.675,
+            13.878, 13.986, 13.607
+        ],
+        "generic_ticker_id": (
+            ["od10 Comdty"] * 3 +
+            ["od13 Comdty"] * 3 +
+            ["od19 Comdty"] * 3
+        )
     })
+
     surface["curve_id"] = surface["generic_ticker_id"] + surface["obs_date"].dt.strftime("%Y%m%d")
 
-    tenors = {"1.2y": 1.2, "1.4y": 1.4, "1.5y": 1.5, "1.6y": 1.6}
+    tenors = {"1.0y": 1.0, "1.1y": 1.1, "1.5y": 1.5}
     result = interpolate_di_surface(surface, tenors)
 
     assert not result.empty
     assert result.index.is_unique
 
-    curva = pd.Series([14.675, 14.396, 13.607], index=[1.087302, 1.341270, 1.583333])
-    esperado = flat_forward_interpolation(1.5, curva)
+    # Validação de 1 ponto interpolado para od13 Comdty
+    curva = pd.Series([14.459, 14.629, 14.675], index=[1.079365079, 1.079365079, 1.087301587])
+    esperado = flat_forward_interpolation(1.1, curva)
 
-    for val in result["1.5y"]:
-        assert np.isclose(val, esperado, atol=1e-3)
+    curve_id = "od13 Comdty20250430"
+    interpolado = result.loc[curve_id]["1.1y"]
+    assert np.isclose(interpolado, esperado, atol=1e-3)
+
 
 
 def test_taxas_e_terms_corretos_para_2025_06_30():
