@@ -6,17 +6,19 @@ from utils.interpolation import interpolate_di_surface
 from finmath.termstructure.curve_models import flat_forward_interpolation
 import numpy as np
 
-
 dc = DayCounts("bus/252", calendar="cdr_anbima")
+
 
 def test_interpolate_di_surface_flat_forward():
     ref_date = pd.Timestamp("2025-06-30")
+
     surface = pd.DataFrame({
         "obs_date": [ref_date] * 3,
         "tenor": [1.087302, 1.341270, 1.583333],
         "yield": [14.675, 14.396, 13.607],
         "generic_ticker_id": ["od13 Comdty", "od16 Comdty", "od19 Comdty"]
     })
+    surface["curve_id"] = surface["generic_ticker_id"] + surface["obs_date"].dt.strftime("%Y%m%d")
 
     tenors = {"1.2y": 1.2, "1.4y": 1.4, "1.5y": 1.5, "1.6y": 1.6}
     result = interpolate_di_surface(surface, tenors)
@@ -29,6 +31,7 @@ def test_interpolate_di_surface_flat_forward():
 
     for val in result["1.5y"]:
         assert np.isclose(val, esperado, atol=1e-3)
+
 
 def test_taxas_e_terms_corretos_para_2025_06_30():
     surface, _, _ = load_inputs(CONFIG)
