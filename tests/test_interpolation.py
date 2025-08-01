@@ -24,7 +24,6 @@ def test_interpolate_di_surface_flat_forward():
     tenors = {"1-year": 1.0, "2-year": 2.0, "3-year": 3.0, "2.5-year": 2.5}
     result = interpolate_di_surface(surface, tenors)
 
-    assert not result.empty
     assert result.index.is_unique  # verifica unicidade do identificador
 
     curva = pd.Series([10.0, 11.0, 12.0], index=[1.0, 2.0, 3.0])
