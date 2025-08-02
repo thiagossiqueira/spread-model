@@ -5,9 +5,17 @@ from utils.file_io import load_inputs
 from utils.interpolation import interpolate_di_surface
 from config import CONFIG
 
-
 def test_load_and_interpolate_produces_non_empty_surface():
     surface, _, _ = load_inputs(CONFIG)
+
+    # Diagnóstico: quantas curvas têm pelo menos 2 pontos únicos?
+    valid_curve_ids = (
+        surface.groupby("curve_id")
+        .filter(lambda df: df["tenor"].nunique() >= 2)
+        .groupby("curve_id").ngroup().nunique()
+    )
+    print("✅ Curvas válidas para interpolação:", valid_curve_ids)
+
     yc_table = interpolate_di_surface(surface, CONFIG["TENORS"])
 
     assert not yc_table.empty, "A curva interpolada está vazia"

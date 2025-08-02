@@ -47,6 +47,14 @@ spread-model/
 │       └── pytest.yml           # Workflow de GitHub Actions para ejecutar pytest automáticamente
 │
 ├── tests/                       # Pruebas unitarias con pytest
+│   ├── conftest.py              # é extremamente útil em testes de integração pq testes de integração geralmente precisam de dados compartilhados, acesso a módulos fora do diretório padrão, configurações globais, etc.
+│   ├── manual_validation.py             
+│   ├── test_interpolation.py
+│   ├── test_di_surface_integrity.py
+│   ├── test_spread_calculator.py
+│   ├── test_interpolation.py
+│   ├── test_spread_calculator.py
+│   └── test_integration_pipeline.py
 └── data/
     ├── skipped_yields.csv       # Observaciones ignoradas
     └── visualizaciones/         # (opcional) salidas adicionales
