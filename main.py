@@ -34,7 +34,7 @@ if __name__ == "__main__":
     pivoted = pivoted.reset_index().set_index("curve_id")
 
     # 5. Interpolar a curva DI com os tenores alvo definidos
-    yc_table = interpolate_di_surface(pivoted.reset_index(), CONFIG["TENORS"]).set_index("curve_id")
+    yc_table = interpolate_di_surface(pivoted.reset_index(), CONFIG["TENORS"]).set_index("obs_date")
 
     # 6. Construir janelas de observação
     obs_windows = build_observation_windows(corp_base, yields_ts, CONFIG["OBS_WINDOW"])

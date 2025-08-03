@@ -4,19 +4,18 @@ from finmath.termstructure.curve_models import flat_forward_interpolation
 
 def interpolate_di_surface(surface: pd.DataFrame, tenors: dict) -> pd.DataFrame:
     surface = surface.copy()
-    surface["curve_id"] = surface["generic_ticker_id"] + surface["obs_date"].dt.strftime("%Y%m%d")
 
     rows = []
-    for curve_id, grp in surface.groupby("curve_id"):
+    for obs_date, grp in surface.groupby("obs_date"):
         grp = grp.drop_duplicates(subset="tenor").sort_values("tenor")
         if grp["tenor"].nunique() < 2:
             continue  # ignora curvas com menos de 2 pontos
+
         x = grp["tenor"].to_numpy()
         y = grp["yield"].to_numpy()
         curva = pd.Series(y, index=x)
-        obs_date = grp["obs_date"].iloc[0]
+
         rows.append({
-            "curve_id": curve_id,
             "obs_date": obs_date,
             **{k: flat_forward_interpolation(t, curva) for k, t in tenors.items()}
         })
@@ -25,7 +24,7 @@ def interpolate_di_surface(surface: pd.DataFrame, tenors: dict) -> pd.DataFrame:
     if result.empty:
         raise ValueError("interpolate_di_surface() retornou DataFrame vazio!")
 
-    result = result.set_index("curve_id").sort_index()
+    result = result.set_index("obs_date").sort_index()
     return result
 
 
