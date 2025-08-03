@@ -2,7 +2,7 @@
 
 from src.utils.file_io import load_inputs
 from src.utils.interpolation import interpolate_di_surface
-from src.utils.plotting import plot_surface_spread_with_bonds, show_summary_table
+from src.utils.plotting import plot_surface_spread_with_bonds, plot_yield_curve_surface, show_summary_table
 from src.core.windowing import build_observation_windows
 from src.core.spread_calculator import compute_spreads
 from src.config import CONFIG
@@ -35,6 +35,23 @@ if __name__ == "__main__":
 
     # 5. Interpolar a curva DI com os tenores alvo definidos
     yc_table = interpolate_di_surface(surface, CONFIG["TENORS"])
+
+
+    ####
+
+
+
+    di_surface = yc_table.set_index("obs_date")
+    fig_di_surface = plot_yield_curve_surface(
+        di_surface,
+        source_text="Source: DI B3 – cálculos propios"
+    )
+    fig_di_surface.write_html("static/di_surface.html")
+
+
+    # ####
+
+
 
     # 6. Construir janelas de observação
     obs_windows = build_observation_windows(corp_base, yields_ts, CONFIG["OBS_WINDOW"])

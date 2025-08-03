@@ -16,5 +16,19 @@ def spread():
 def summary():
     return render_template("summary_iframe.html")
 
+@app.route("/di-surface")
+def show_di_surface():
+    return render_template("spread_iframe.html", chart="static/di_surface.html")
+
+
+@app.route("/di-summary")
+def di_summary():
+    from src.utils.plotting import show_summary_table
+    from src.utils.file_io import load_inputs
+    surface, _, _ = load_inputs(CONFIG)
+    table_fig = show_summary_table(surface)  # adapt this to DI data
+    return render_template("summary_iframe.html", chart=table_fig.to_html(full_html=False))
+
+
 if __name__ == "__main__":
     app.run(debug=True)

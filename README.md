@@ -129,6 +129,28 @@ chmod +x post-pull.sh
 
 ---
 
+### Referencias externas útiles
+
+Para análisis y consulta adicional sobre curvas de interés y títulos del gobierno en Brasil:
+
+- **Tasas de títulos públicos (ANBIMA)**  
+  Cálculo diario de tasas de interés de títulos públicos brasileños.  
+  [https://www.anbima.com.br/pt_br/informar/taxas-de-titulos-publicos.htm](https://www.anbima.com.br/pt_br/informar/taxas-de-titulos-publicos.htm)
+
+- **Curva de tasas de interés – Gráficos actualizados**  
+  Visualizaciones recientes de la curva de tasas de interés en Brasil, útiles para análisis macroeconómico.  
+  [https://clubedospoupadores.com/curva-de-juros](https://clubedospoupadores.com/curva-de-juros)
+
+- **Spreads de títulos públicos brasileños**  
+  Comparación entre distintas curvas de rendimiento y spreads sobre la curva base.  
+  [https://clubedospoupadores.com/curva-de-juros/spread](https://clubedospoupadores.com/curva-de-juros/spread)
+
+- **Curva de tasas – Inflación implícita**  
+  Estimación de la inflación implícita derivada de la diferencia entre curvas nominales y reales.  
+  [https://clubedospoupadores.com/curva-de-juros/inflacao](https://clubedospoupadores.com/curva-de-juros/inflacao)
+---
+
+
 ### Build y Metadatos
 Ver `pyproject.toml` para detalles de empaquetado y configuración del proyecto.
 
