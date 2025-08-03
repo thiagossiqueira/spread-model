@@ -18,27 +18,20 @@ if __name__ == "__main__":
     if "curve_id" not in surface.columns:
         surface["curve_id"] = surface["generic_ticker_id"] + surface["obs_date"].dt.strftime("%Y%m%d")
 
-    # 3. Pivotar para formato wide (um row por curva, colunas = tenors)
-    pivoted = surface.pivot(index="curve_id", columns="tenor", values="yield")
+    # 3. Interpolação da curva DI (mantendo formato longo)
+    yc_table = interpolate_di_surface(surface, CONFIG["TENORS"]).set_index("curve_id")
 
-    # 4. Anexar obs_date (para uso em plotagem/interpolação)
-    obs_dates = surface[["curve_id", "obs_date"]].drop_duplicates().set_index("curve_id")
-    pivoted = pivoted.merge(obs_dates, left_index=True, right_index=True)
-
-    # 5. Interpolar a curva DI
-    yc_table = interpolate_di_surface(pivoted.reset_index(), CONFIG["TENORS"]).set_index("curve_id")
-
-    # 6. Construir janelas de observação
+    # 4. Construir janelas de observação
     obs_windows = build_observation_windows(corp_base, yields_ts, CONFIG["OBS_WINDOW"])
 
-    # 7. Calcular spreads
+    # 5. Calcular spreads
     corp_bonds, skipped = compute_spreads(corp_base, yields_ts, yc_table, obs_windows, CONFIG["TENORS"])
 
-    # 8. Criar diretórios de saída
+    # 6. Criar diretórios de saída
     os.makedirs("data", exist_ok=True)
     os.makedirs("static", exist_ok=True)
 
-    # 9. Construir matriz 3D de spreads
+    # 7. Construir matriz 3D de spreads
     spread_surface = corp_bonds.pivot_table(
         index="OBS_DATE",
         columns="TENOR_BUCKET",
@@ -51,7 +44,7 @@ if __name__ == "__main__":
     ordered_columns = [k for k, _ in tenor_order if k in spread_surface.columns]
     spread_surface = spread_surface[ordered_columns]
 
-    # 10. Gerar gráfico 3D
+    # 8. Gerar gráfico 3D
     fig = plot_surface_spread_with_bonds(
         df_surface=spread_surface,
         audit=corp_bonds,
@@ -61,12 +54,12 @@ if __name__ == "__main__":
     )
     fig.write_html("static/spread_surface.html")
 
-    # 11. Tabela resumo
+    # 9. Tabela resumo
     table_fig = show_summary_table(corp_bonds)
     if table_fig is not None:
         table_fig.write_html("static/summary_table.html")
 
-    # 12. Exportar observações ignoradas
+    # 10. Exportar observações ignoradas
     pd.DataFrame(skipped, columns=["Bond ID", "Obs Date", "Reason"]).to_csv("data/skipped_yields.csv", index=False)
 
     print(f"✅ {len(corp_bonds)} spreads calculados. {len(skipped)} observações ignoradas.")
