@@ -11,7 +11,7 @@ def compute_spreads(corp_base, yields_ts, yc_table, observation_periods, tenors_
     skipped = []
 
     for _, bond in corp_base.iterrows():
-        bond_id = bond["generic_ticker_id"]
+        bond_id = bond["id"]
         obs_start, obs_end = observation_periods.get(bond_id, (None, None))
         if obs_start is None:
             continue
