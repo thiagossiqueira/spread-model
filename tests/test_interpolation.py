@@ -8,45 +8,41 @@ import numpy as np
 
 dc = DayCounts("bus/252", calendar="cdr_anbima")
 
-
 def test_interpolate_di_surface_flat_forward():
-    ref_date = pd.Timestamp("2025-04-30")
-    surface = pd.DataFrame({
-        "obs_date": [ref_date] * 9,
-        "tenor": [
-            0.833333333, 0.837301587, 0.837301587,  # od10 Comdty
-            1.079365079, 1.079365079, 1.087301587,  # od13 Comdty
-            1.579365079, 1.583333333, 1.583333333   # od19 Comdty
-        ],
-        "yield": [
-            14.634, 14.770, 14.861,
-            14.459, 14.629, 14.675,
-            13.878, 13.986, 13.607
-        ],
-        "generic_ticker_id": (
-            ["od10 Comdty"] * 3 +
-            ["od13 Comdty"] * 3 +
-            ["od19 Comdty"] * 3
-        )
-    })
+    dados = [
+        # Curve 1 – 2025-04-30
+        ("2025-04-30", 0.833333, 14.634, "od10 Comdty"),
+        ("2025-04-30", 1.079365, 14.459, "od13 Comdty"),
+        ("2025-04-30", 1.579365, 13.878, "od19 Comdty"),
 
+        # Curve 2 – 2025-05-30
+        ("2025-05-30", 0.837302, 14.770, "od10 Comdty"),
+        ("2025-05-30", 1.079365, 14.629, "od13 Comdty"),
+        ("2025-05-30", 1.583333, 13.986, "od19 Comdty"),
+
+        # Curve 3 – 2025-06-30
+        ("2025-06-30", 0.837302, 14.861, "od10 Comdty"),
+        ("2025-06-30", 1.087302, 14.675, "od13 Comdty"),
+        ("2025-06-30", 1.583333, 13.607, "od19 Comdty"),
+    ]
+
+    surface = pd.DataFrame(dados, columns=["obs_date", "tenor", "yield", "generic_ticker_id"])
+    surface["obs_date"] = pd.to_datetime(surface["obs_date"])
     surface["curve_id"] = surface["generic_ticker_id"] + surface["obs_date"].dt.strftime("%Y%m%d")
 
-    tenors = {"1.0y": 1.0, "1.1y": 1.1, "1.5y": 1.5}
+    tenors = {"interp1": 1.1, "interp2": 1.5}
+
     result = interpolate_di_surface(surface, tenors)
 
     assert not result.empty
     assert result.index.is_unique
 
-    # Validação de 1 ponto interpolado para od13 Comdty
-    curva = pd.Series([14.459, 14.629, 14.675], index=[1.079365079, 1.079365079, 1.087301587])
+    # Validação de uma curva conhecida
+    curva = pd.Series([14.861, 14.675, 13.607], index=[0.837302, 1.087302, 1.583333])
     esperado = flat_forward_interpolation(1.1, curva)
-
-    obs_date = pd.Timestamp("2025-04-30")
-    interpolado = result.loc[obs_date]["1.1y"]
+    interpolado = result.loc[pd.Timestamp("2025-06-30")]["interp1"]
 
     assert np.isclose(interpolado, esperado, atol=1e-3)
-
 
 
 def test_taxas_e_terms_corretos_para_2025_06_30():
