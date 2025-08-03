@@ -16,10 +16,7 @@ def compute_spreads(corp_base, yields_ts, yc_table, observation_periods, tenors_
         if obs_start is None:
             continue
 
-        for curve_id in yc_table.index:
-            obs_date_str = curve_id[-8:]
-            obs_date = pd.to_datetime(obs_date_str, format="%Y%m%d")
-
+        for obs_date, di_row in yc_table.iterrows():
             if not (obs_start <= obs_date <= obs_end):
                 continue
 
@@ -37,7 +34,9 @@ def compute_spreads(corp_base, yields_ts, yc_table, observation_periods, tenors_
             if tenor_yrs <= 0:
                 continue
 
-            interpolated_di_yield = interpolate_yield_for_tenor(obs_date, yc_table, tenor_yrs, tenors_dict, curve_id)
+            interpolated_di_yield = interpolate_yield_for_tenor(
+                obs_date, yc_table, tenor_yrs, tenors_dict, obs_date
+            )
 
             spread = yas_yld - interpolated_di_yield
 
@@ -60,6 +59,8 @@ def compute_spreads(corp_base, yields_ts, yc_table, observation_periods, tenors_
 
     names = list(tenors_dict.keys())
     vals = np.array(list(tenors_dict.values()))
-    corp_bonds["TENOR_BUCKET"] = corp_bonds["TENOR_YRS"].apply(lambda y: names[np.argmin(np.abs(vals - y))])
+    corp_bonds["TENOR_BUCKET"] = corp_bonds["TENOR_YRS"].apply(
+        lambda y: names[np.argmin(np.abs(vals - y))]
+    )
 
     return corp_bonds, skipped
