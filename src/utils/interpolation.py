@@ -3,30 +3,28 @@ import pandas as pd
 from finmath.termstructure.curve_models import flat_forward_interpolation
 
 def interpolate_di_surface(surface: pd.DataFrame, tenors: dict) -> pd.DataFrame:
-    surface = surface.copy()
-
     rows = []
+
+    # Garante que obs_date é datetime
+    surface["obs_date"] = pd.to_datetime(surface["obs_date"])
+
     for obs_date, grp in surface.groupby("obs_date"):
-        grp = grp.drop_duplicates(subset="tenor").sort_values("tenor")
-        if grp["tenor"].nunique() < 2:
-            continue  # ignora curvas com menos de 2 pontos
+        curva = pd.Series(grp["yield"].values, index=grp["tenor"].values).dropna()
 
-        x = grp["tenor"].to_numpy()
-        y = grp["yield"].to_numpy()
-        curva = pd.Series(y, index=x)
+        if len(curva) < 2:
+            continue  # ignora curvas com menos de dois pontos distintos
 
+        interpolated = {k: flat_forward_interpolation(t, curva) for k, t in tenors.items()}
         rows.append({
             "obs_date": obs_date,
-            **{k: flat_forward_interpolation(t, curva) for k, t in tenors.items()}
+            **interpolated
         })
 
     result = pd.DataFrame(rows)
     if result.empty:
         raise ValueError("interpolate_di_surface() retornou DataFrame vazio!")
 
-    result = result.set_index("obs_date").sort_index()
-    return result
-
+    return result.set_index("obs_date").sort_index()
 
 
 def interpolate_yield_for_tenor(obs_date, yc_table, target_tenor, tenors, curve_id):
