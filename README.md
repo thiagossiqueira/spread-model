@@ -13,31 +13,33 @@ spread-model/
 ├── WSGI.py                      # Archivo de configuración WSGI para despliegue en PythonAnywhere
 ├── main.py                      # Genera los datos y visualizaciones
 ├── app.py                       # Aplicación Flask para visualización web
-├── config.py                    # Parámetros globales y rutas
 ├── pyproject.toml               # Configuración del proyecto Python
 ├── requirements.txt             # Dependencias
 ├── .gitignore                   # Archivos ignorados por Git
+├── post-pull.sh                 # Script de actualización post-pull (instalación + generación de gráficos)
 ├── README.md
 │
 ├── src/                         # Código fuente modular (instalado vía setup)
 │   ├── calendars/               # Cálculo de fechas hábiles
 │   ├── finmath/                 # Funciones financieras
 │   ├── utils/                   # I/O, interpolación, gráficos
+│   ├── config.py                # Parámetros globales y rutas
 │   └── core/                    # Cálculo de ventanas y spreads
 │
+│
 ├── datos_y_modelos/            # Archivos de datos (no incluidos si son privados)
-│   ├── db/
+│   ├── db/                     # Base de datos histórica de curvas DI y precios de bonos
 │   │   ├── ODA_Comdty.xlsx
 │   │   ├── bsrch.xlsx
-│   │   └── ya.xlsx
+│   │   └── ya.xlsx             # Yields de bonos corporativos
 │   └── Domestic/
-│       └── brazil_domestic_corp_db.xlsx
+│       └── brazil_domestic_corp_db.xlsx     # Metadata de bonos corporativos brasileños
 │
-├── static/                      # Gráficos HTML exportados
-│   ├── spread_surface.html
-│   └── summary_table.html
+├── static/                      # Visualizaciones exportadas en HTML
+│   ├── spread_surface.html      # Gráfico 3D de spreads (Plotly Surface)
+│   └── summary_table.html       # Tabla resumen comparativa
 │
-├── templates/                   # Plantillas para Flask
+├── templates/                   # Plantillas HTML para la app Flask
 │   ├── index.html
 │   ├── spread_iframe.html
 │   └── summary_iframe.html
@@ -46,18 +48,18 @@ spread-model/
 │   └── workflows/
 │       └── pytest.yml           # Workflow de GitHub Actions para ejecutar pytest automáticamente
 │
-├── tests/                       # Pruebas unitarias con pytest
+├── tests/                       # Pruebas unitarias y de integración (pytest)
 │   ├── conftest.py              # é extremamente útil em testes de integração pq testes de integração geralmente precisam de dados compartilhados, acesso a módulos fora do diretório padrão, configurações globais, etc.
-│   ├── manual_validation.py             
-│   ├── test_interpolation.py
-│   ├── test_di_surface_integrity.py
+│   ├── manual_validation.py     # Validaciones manuales, pruebas exploratorias           
+│   ├── test_interpolation.py    # Pruebas unitarias para interpolación de la curva DI
+│   ├── test_di_surface_integrity.py  # Verifica que los datos cargados coincidan con lo esperado
 │   ├── test_spread_calculator.py
 │   ├── test_interpolation.py
-│   ├── test_spread_calculator.py
-│   └── test_integration_pipeline.py
+│   ├── test_spread_calculator.py     # Testea cálculo de spreads vs curva DI interpolada
+│   ├── test_integration_pipeline.py  # Prueba de extremo a extremo: carga, interpolación, verificación
 └── data/
-    ├── skipped_yields.csv       # Observaciones ignoradas
-    └── visualizaciones/         # (opcional) salidas adicionales
+    ├── skipped_yields.csv       # Observaciones descartadas durante los cálculos
+    └── visualizaciones/         # Salidas adicionales opcionales (tablas, figuras, etc.)
 
 ```
 
@@ -101,6 +103,23 @@ Ejecutar pruebas con `pytest`:
 ```bash
 pytest
 ```
+
+
+### Script de Pós-pull (actualización automática)
+Después de hacer `git pull`, ejecuta:
+```bash
+./post-pull.sh
+```
+Este script:
+- Activa el entorno virtual si existe
+- Reinstala el proyecto (`pip install -e .`)
+- Ejecuta `main.py` para actualizar las visualizaciones
+
+Puedes hacerlo ejecutable con:
+```bash
+chmod +x post-pull.sh
+```
+
 
 ---
 
