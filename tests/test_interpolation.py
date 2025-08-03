@@ -42,8 +42,9 @@ def test_interpolate_di_surface_flat_forward():
     curva = pd.Series([14.459, 14.629, 14.675], index=[1.079365079, 1.079365079, 1.087301587])
     esperado = flat_forward_interpolation(1.1, curva)
 
-    curve_id = "od13 Comdty20250430"
-    interpolado = result.loc[curve_id]["1.1y"]
+    obs_date = pd.Timestamp("2025-04-30")
+    interpolado = result.loc[obs_date]["1.1y"]
+
     assert np.isclose(interpolado, esperado, atol=1e-3)
 
 
