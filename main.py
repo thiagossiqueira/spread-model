@@ -42,6 +42,9 @@ if __name__ == "__main__":
         di_surface,
         source_text="Source: DI B3 – cálculos propios"
     )
+    fig_di_surface.write_html("static/di_surface.html")
+
+
 
     # 6. Construir janelas de observação
     obs_windows = build_observation_windows(corp_base, yields_ts, CONFIG["OBS_WINDOW"])
