@@ -37,19 +37,13 @@ if __name__ == "__main__":
     yc_table = interpolate_di_surface(surface, CONFIG["TENORS"])
 
 
-    ####
 
-
-
-    di_surface = yc_table.set_index("obs_date")
     fig_di_surface = plot_yield_curve_surface(
-        di_surface,
+        yc_table,
         source_text="Source: DI B3 – cálculos propios"
     )
     fig_di_surface.write_html("static/di_surface.html")
 
-
-    # ####
 
 
 
