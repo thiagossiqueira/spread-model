@@ -36,8 +36,10 @@ if __name__ == "__main__":
     # 5. Interpolar a curva DI com os tenores alvo definidos
     yc_table = interpolate_di_surface(surface, CONFIG["TENORS"])
 
+    di_surface = surface.pivot(index="obs_date", columns="tenor", values="yield").sort_index()
+
     fig_di_surface = plot_yield_curve_surface(
-        surface.set_index("obs_date"),
+        di_surface,
         source_text="Source: DI B3 – cálculos propios"
     )
 
