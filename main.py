@@ -36,16 +36,10 @@ if __name__ == "__main__":
     # 5. Interpolar a curva DI com os tenores alvo definidos
     yc_table = interpolate_di_surface(surface, CONFIG["TENORS"])
 
-
-
     fig_di_surface = plot_yield_curve_surface(
-        yc_table,
+        surface.set_index("obs_date"),
         source_text="Source: DI B3 – cálculos propios"
     )
-    fig_di_surface.write_html("static/di_surface.html")
-
-
-
 
     # 6. Construir janelas de observação
     obs_windows = build_observation_windows(corp_base, yields_ts, CONFIG["OBS_WINDOW"])
