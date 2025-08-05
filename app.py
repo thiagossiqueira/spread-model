@@ -26,5 +26,6 @@ def di_summary():
     return render_template("summary_iframe.html", chart="static/di_summary_table.html")
 
 
+
 if __name__ == "__main__":
     app.run(debug=True)
