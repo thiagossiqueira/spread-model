@@ -40,11 +40,18 @@ if __name__ == "__main__":
     yc_table = interpolate_di_surface(surface, CONFIG["TENORS"])
 
     # ✅ Gerar gráfico da curva DI interpolada
+    di_surface = surface.pivot_table(
+        index="obs_date",
+        columns="tenor",
+        values="yield",
+        aggfunc="mean"
+    ).sort_index()
+
     fig_di_surface = plot_yield_curve_surface(
-        yc_table,  # <- use yc_table here!
+        di_surface,
         source_text="Source: DI B3 – cálculos propios"
     )
-    fig_di_surface.write_html("static/di_surface.html")  # overwrite previous
+    fig_di_surface.write_html("static/di_surface.html")
 
     # 6. Construir janelas de observação
     obs_windows = build_observation_windows(corp_base, yields_ts, CONFIG["OBS_WINDOW"])
