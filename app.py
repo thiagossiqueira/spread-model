@@ -23,11 +23,8 @@ def show_di_surface():
 
 @app.route("/di-summary")
 def di_summary():
-    from src.utils.plotting import show_summary_table
-    from src.utils.file_io import load_inputs
-    surface, _, _ = load_inputs(CONFIG)
-    table_fig = show_summary_table(surface)
-    return render_template("summary_iframe.html", chart=table_fig.to_html(full_html=False))
+    return render_template("summary_iframe.html", chart="static/di_summary_table.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True)

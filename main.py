@@ -52,6 +52,11 @@ if __name__ == "__main__":
     print("✅ Salvando gráfico de DI em static/di_surface.html")
     fig_di_surface.write_html("static/di_surface.html")
 
+    # ✅ Gerar tabela resumo para DI
+    table_di = show_summary_table(surface)
+    if table_di is not None:
+        table_di.write_html("static/di_summary_table.html")
+
     # 7. Construir janelas de observação
     obs_windows = build_observation_windows(corp_base, yields_ts, CONFIG["OBS_WINDOW"])
 
