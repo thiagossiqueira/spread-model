@@ -11,9 +11,7 @@ def plot_yield_curve_surface(df, source_text=""):
         x=df.columns, y=df.index, z=df.values,
         colorscale="ice", reversescale=True,
         cmin=zmin, cmax=zmax,
-        hovertemplate="<br>Date: %{y}"
-                      "<br>Maturity: %{x}"
-                      "<br>Yield: %{z:.2f}%<extra></extra>"
+        hovertemplate="<br>Date: %{y}" "<br>Maturity: %{x}" "<br>Yield: %{z:.2f}%<extra></extra>"
     ))
     fig.add_trace(go.Scatter3d(
         x=[short_col]*len(df), y=df.index, z=df[short_col],
@@ -38,14 +36,14 @@ def plot_surface_spread_with_bonds(df_surface: pd.DataFrame,
                                    zmin: float = None,
                                    zmax: float = None):
 
-    cmin = zmin if zmin is not None else audit["SPREAD"].min(),
-    cmax = zmax if zmax is not None else audit["SPREAD"].max(),
+    cmin = zmin if zmin is not None else audit["SPREAD"].min()
+    cmax = zmax if zmax is not None else audit["SPREAD"].max()
 
     fig = go.Figure()
     fig.add_trace(go.Surface(
         x=df_surface.columns, y=df_surface.index, z=df_surface.values,
         colorscale="RdBu", reversescale=False,
-        cmin=zmin, cmax=zmax,
+        cmin=cmin, cmax=cmax,
         hovertemplate="<br>Date: %{y}<br>Tenor: %{x}<br>Spread: %{z:.2f} bp<extra></extra>"
     ))
     fig.add_trace(go.Scatter3d(
@@ -108,26 +106,23 @@ def show_summary_table(corp_bonds_df: pd.DataFrame):
         height=600
     )
 
-    #table_fig.show()
     return table_fig
 
 def show_di_summary_table(df: pd.DataFrame) -> go.Figure:
     df = df.copy()
-    df["obs_date"] = pd.to_datetime(df["obs_date"])
-    df = df.sort_values(["obs_date", "tenor"])
-    df["tenor"] = df["tenor"].round(3)
-    df["yield"] = df["yield"].round(3)
+    df.index.name = "obs_date"
+    df = df.reset_index().melt(id_vars="obs_date", var_name="tenor", value_name="yield")
 
-    # Detectar a coluna de ticker
-    ticker_col = "id" if "id" in df.columns else "generic_ticker_id"
+    df = df.dropna(subset=["yield"])
+    df["tenor"] = df["tenor"].astype(str)
+    df["yield"] = df["yield"].round(2)
 
     table = go.Figure(
         data=[go.Table(
-            header=dict(values=["Data", "Contrato", "Tenor (anos)", "Yield (%)"],
+            header=dict(values=["Data", "Tenor", "Yield (%)"],
                         fill_color="lightblue", align="left"),
             cells=dict(values=[
                 df["obs_date"].dt.strftime("%Y-%m-%d"),
-                df[ticker_col],
                 df["tenor"],
                 df["yield"]
             ],
@@ -136,6 +131,6 @@ def show_di_summary_table(df: pd.DataFrame) -> go.Figure:
     )
     table.update_layout(
         height=800,
-        title="Contratos DI – Detalhamento por Tenor e Data"
+        title="Curva DI Interpolada – Detalhamento por Tenor e Data"
     )
     return table
