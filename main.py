@@ -36,19 +36,12 @@ if __name__ == "__main__":
     # 5. Interpolar a curva DI com os tenores alvo definidos
     yc_table = interpolate_di_surface(surface, CONFIG["TENORS"])
 
-    # 5. Interpolar a curva DI com os tenores alvo definidos
-    yc_table = interpolate_di_surface(surface, CONFIG["TENORS"])
-
     # ✅ Gerar gráfico da curva DI interpolada
-    di_surface = surface.pivot_table(
-        index="obs_date",
-        columns="tenor",
-        values="yield",
-        aggfunc="mean"
-    ).sort_index()
+    ordered_cols = ["1-month", "3-month", "6-month", "1-year", "2-year", "3-year", "5-year"]
+    df_vis = yc_table[ordered_cols]
 
     fig_di_surface = plot_yield_curve_surface(
-        di_surface,
+        df_vis,
         source_text="Source: DI B3 – cálculos propios"
     )
     fig_di_surface.write_html("static/di_surface.html")
@@ -76,7 +69,7 @@ if __name__ == "__main__":
     ordered_columns = [k for k, _ in tenor_order if k in spread_surface.columns]
     spread_surface = spread_surface[ordered_columns]
 
-    # 11. Gerar gráfico 3D
+    # 11. Gerar gráfico 3D de spreads
     fig = plot_surface_spread_with_bonds(
         df_surface=spread_surface,
         audit=corp_bonds,
