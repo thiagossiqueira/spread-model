@@ -110,3 +110,30 @@ def show_summary_table(corp_bonds_df: pd.DataFrame):
 
     #table_fig.show()
     return table_fig
+
+
+def show_di_summary_table(df: pd.DataFrame) -> go.Figure:
+    df = df.copy()
+    df["obs_date"] = pd.to_datetime(df["obs_date"])
+    df = df.sort_values(["obs_date", "tenor"])
+    df["tenor"] = df["tenor"].round(3)
+    df["yield"] = df["yield"].round(3)
+
+    table = go.Figure(
+        data=[go.Table(
+            header=dict(values=["Data", "Contrato", "Tenor (anos)", "Yield (%)"],
+                        fill_color="lightblue", align="left"),
+            cells=dict(values=[
+                df["obs_date"].dt.strftime("%Y-%m-%d"),
+                df["id"],
+                df["tenor"],
+                df["yield"]
+            ],
+            fill_color="white", align="left"))
+        ]
+    )
+    table.update_layout(
+        height=800,
+        title="Contratos DI – Detalhamento por Tenor e Data"
+    )
+    return table

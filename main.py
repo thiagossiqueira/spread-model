@@ -2,7 +2,7 @@
 
 from src.utils.file_io import load_inputs
 from src.utils.interpolation import interpolate_di_surface
-from src.utils.plotting import plot_surface_spread_with_bonds, plot_yield_curve_surface, show_summary_table
+from src.utils.plotting import plot_surface_spread_with_bonds, plot_yield_curve_surface, show_summary_table, show_di_summary_table
 from src.core.windowing import build_observation_windows
 from src.core.spread_calculator import compute_spreads
 from src.config import CONFIG
@@ -53,7 +53,8 @@ if __name__ == "__main__":
     fig_di_surface.write_html("static/di_surface.html")
 
     # ✅ Gerar tabela resumo para DI
-    table_di = show_summary_table(surface)
+    table_di = show_di_summary_table(surface)
+
     if table_di is not None:
         table_di.write_html("static/di_summary_table.html")
 
