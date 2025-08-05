@@ -111,7 +111,6 @@ def show_summary_table(corp_bonds_df: pd.DataFrame):
     #table_fig.show()
     return table_fig
 
-
 def show_di_summary_table(df: pd.DataFrame) -> go.Figure:
     df = df.copy()
     df["obs_date"] = pd.to_datetime(df["obs_date"])
@@ -119,13 +118,16 @@ def show_di_summary_table(df: pd.DataFrame) -> go.Figure:
     df["tenor"] = df["tenor"].round(3)
     df["yield"] = df["yield"].round(3)
 
+    # Detectar a coluna de ticker
+    ticker_col = "id" if "id" in df.columns else "generic_ticker_id"
+
     table = go.Figure(
         data=[go.Table(
             header=dict(values=["Data", "Contrato", "Tenor (anos)", "Yield (%)"],
                         fill_color="lightblue", align="left"),
             cells=dict(values=[
                 df["obs_date"].dt.strftime("%Y-%m-%d"),
-                df["id"],
+                df[ticker_col],
                 df["tenor"],
                 df["yield"]
             ],
