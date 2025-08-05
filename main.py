@@ -36,25 +36,27 @@ if __name__ == "__main__":
     # 5. Interpolar a curva DI com os tenores alvo definidos
     yc_table = interpolate_di_surface(surface, CONFIG["TENORS"])
 
-    # ✅ Gerar gráfico da curva DI interpolada
-    ordered_cols = ["1-month", "3-month", "6-month", "1-year", "2-year", "3-year", "5-year"]
-    df_vis = yc_table[ordered_cols]
+    # 6. Criar diretórios de saída
+    os.makedirs("data", exist_ok=True)
+    os.makedirs("static", exist_ok=True)
+
+    # ✅ Gerar gráfico da curva DI interpolada (benchmark)
+    ordered_cols = [k for k, _ in sorted(CONFIG["TENORS"].items(), key=lambda x: x[1])]
+    df_vis = yc_table[ordered_cols] if all(col in yc_table.columns for col in ordered_cols) else yc_table
 
     fig_di_surface = plot_yield_curve_surface(
         df_vis,
         source_text="Source: DI B3 – cálculos propios"
     )
+
+    print("✅ Salvando gráfico de DI em static/di_surface.html")
     fig_di_surface.write_html("static/di_surface.html")
 
-    # 6. Construir janelas de observação
+    # 7. Construir janelas de observação
     obs_windows = build_observation_windows(corp_base, yields_ts, CONFIG["OBS_WINDOW"])
 
-    # 7. Calcular spreads
+    # 8. Calcular spreads
     corp_bonds, skipped = compute_spreads(corp_base, yields_ts, yc_table, obs_windows, CONFIG["TENORS"])
-
-    # 8. Criar diretórios de saída
-    os.makedirs("data", exist_ok=True)
-    os.makedirs("static", exist_ok=True)
 
     # 9. Construir matriz de spreads para gráfico 3D
     spread_surface = corp_bonds.pivot_table(
