@@ -1,5 +1,4 @@
 # main.py
-
 from src.utils.file_io import load_inputs
 from src.utils.interpolation import interpolate_di_surface
 from src.utils.plotting import (
@@ -58,7 +57,7 @@ if __name__ == "__main__":
     fig_di_surface.write_html("static/di_surface.html")
 
     # ✅ Salvar tabela DI como HTML (para visualização em /di-summary)
-    table_di = show_di_summary_table(yc_table)
+    table_di = show_di_summary_table(df_vis)
     if table_di is not None:
         table_di.write_html("static/di_summary_table.html")
 
