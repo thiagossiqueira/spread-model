@@ -22,5 +22,7 @@ CONFIG = {
         "1-month": 1.0 / 12,
     },
 
-    "OBS_WINDOW": 540  # dias para janela de observação
+    "OBS_WINDOW": 11323  # total days since [(2025 - 1994) x 365.25] >>> CONFIG["OBS_WINDOW"] = int((pd.Timestamp.today() - pd.Timestamp("1994-01-01")).days)
+
+
 }
