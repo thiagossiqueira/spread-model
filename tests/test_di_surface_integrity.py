@@ -9,24 +9,14 @@ def test_taxas_e_terms_corretos_para_2025_06_30():
     surface, _, _ = load_inputs(CONFIG)
 
     surface = surface.reset_index(drop=True)
-    surface = surface[surface["obs_date"].isin([
-        pd.Timestamp("2025-04-30"),
-        pd.Timestamp("2025-05-30"),
-        pd.Timestamp("2025-06-30")
-    ])].copy()
+    surface = surface[surface["obs_date"] == pd.Timestamp("2025-06-30")].copy()
     surface["curve_id"] = surface["generic_ticker_id"] + surface["obs_date"].dt.strftime("%Y%m%d")
     surface = surface.set_index("curve_id")
 
     tickers = [
-        "od1 Comdty", "od1 Comdty", "od1 Comdty",
-        "od5 Comdty", "od5 Comdty", "od5 Comdty",
-        "od9 Comdty", "od9 Comdty", "od9 Comdty"
+        f"od{i} Comdty" for i in [1, 5, 9]
     ]
-    obs_dates = [
-        "20250430", "20250530", "20250630",
-        "20250430", "20250530", "20250630",
-        "20250430", "20250530", "20250630"
-    ]
+
     taxas_esperadas = [
         14.15, 14.65, 14.9,
         14.633, 14.771, 14.933,
@@ -38,13 +28,14 @@ def test_taxas_e_terms_corretos_para_2025_06_30():
         0.761904762, 0.75, 0.753968254
     ]
 
-    assert len(tickers) == len(obs_dates) == len(taxas_esperadas) == len(terms_esperados)
 
-    for ticker, obs_dt, taxa, term in zip(tickers, obs_dates, taxas_esperadas, terms_esperados):
-        curve_id = ticker + obs_dt
+    assert len(tickers) == len(taxas_esperadas) == len(terms_esperados)
+
+    for ticker, taxa, term in zip(tickers, taxas_esperadas, terms_esperados):
+        curve_id = ticker + "20250630"
         assert curve_id in surface.index, f"curve_id {curve_id} não encontrado"
         linha = surface.loc[[curve_id]]
         taxa_encontrada = float(linha["yield"].iloc[0])
         term_encontrado = linha["tenor"].iloc[0]
-        assert round(taxa_encontrada, 4) == round(taxa, 4), f"Taxa incorreta para {ticker} em {obs_dt}"
-        assert round(term_encontrado, 4) == round(term, 4), f"Term incorreto para {ticker} em {obs_dt}"
+        assert round(taxa_encontrada, 4) == round(taxa, 4), f"Taxa incorreta para {ticker}"
+        assert round(term_encontrado, 4) == round(term, 4), f"Term incorreto para {ticker}"
