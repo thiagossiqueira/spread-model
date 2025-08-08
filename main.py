@@ -24,6 +24,7 @@ if __name__ == "__main__":
 
     # 2.1. Remover contratos com volume igual a zero
     if "volume" in surface.columns:
+        surface["volume"] = pd.to_numeric(surface["volume"], errors="coerce")
         surface = surface[surface["volume"] > 0]
 
     # Diagnóstico opcional: verificar curvas com múltiplos tenores por data
