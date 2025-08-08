@@ -22,6 +22,10 @@ if __name__ == "__main__":
     surface = surface.dropna(subset=["yield", "tenor"])
     surface = surface[surface["yield"] > 0]
 
+    # 2.1. Remover contratos com volume igual a zero
+    if "volume" in surface.columns:
+        surface = surface[surface["volume"] > 0]
+
     # Diagnóstico opcional: verificar curvas com múltiplos tenores por data
     curva_por_data = (
         surface.groupby("obs_date")["tenor"]
