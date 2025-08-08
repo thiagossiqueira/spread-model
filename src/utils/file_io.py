@@ -40,9 +40,8 @@ def load_inputs(config):
         "px_last": "yield"
     })[["obs_date", "generic_ticker_id", "yield", "tenor"]].copy()
 
-    # Inclui volume se estiver presente no arquivo
     if "volume" in curve_df.columns:
-        surface["volume"] = curve_df["volume"]
+        surface["volume"] = pd.to_numeric(curve_df["volume"], errors="coerce")
         surface = surface.dropna(subset=["volume"])
         surface = surface[surface["volume"] > 0]
 
