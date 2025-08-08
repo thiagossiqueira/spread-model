@@ -6,6 +6,8 @@ from utils.file_io import load_inputs
 dc = DayCounts("bus/252", calendar="cdr_anbima")
 
 def test_taxas_e_terms_para_contratos_od1_od5_od9():
+
+
     surface, _, _ = load_inputs(CONFIG)
 
     surface = surface.reset_index(drop=True)
