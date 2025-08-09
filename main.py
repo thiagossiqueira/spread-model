@@ -6,6 +6,7 @@ from src.utils.plotting import (
     plot_yield_curve_surface,
     show_summary_table,
     show_di_summary_table,
+    show_ipca_summary_table
 )
 from src.core.windowing import build_observation_windows
 from src.core.spread_calculator import compute_spreads
@@ -99,6 +100,31 @@ if __name__ == "__main__":
     table_fig = show_summary_table(corp_bonds)
     if table_fig is not None:
         table_fig.write_html("static/summary_table.html")
+
+    # 16. Superfície e tabela do contrato ID x IPCA (WLA index)
+    ipca_curve = pd.read_excel(
+        CONFIG["WLA_CURVE_PATH"],
+        sheet_name="only_values"
+    )
+
+    ipca_curve["Curve date"] = pd.to_datetime(ipca_curve["Curve date"])
+    ipca_surface = ipca_curve.rename(columns={
+        "Curve date": "obs_date",
+        "Generic ticker": "generic_ticker_id",
+        "Term": "tenor",
+        "px_last": "yield"
+    })
+    ipca_surface = ipca_surface.dropna(subset=["yield", "tenor"])
+    ipca_surface = ipca_surface[ipca_surface["yield"] > 0]
+    ipca_surface["curve_id"] = ipca_surface["generic_ticker_id"] + ipca_surface["obs_date"].dt.strftime("%Y%m%d")
+    ipca_surface = ipca_surface.drop_duplicates(subset=["curve_id"], keep="last")
+
+    pivot_ipca = ipca_surface.pivot(index="obs_date", columns="tenor", values="yield").sort_index()
+    fig_ipca_surface = plot_yield_curve_surface(pivot_ipca, source_text="Source: WLA B3 – cálculos próprios")
+    fig_ipca_surface.write_html("static/ipca_surface.html")
+
+    fig_ipca_table = show_ipca_summary_table(ipca_surface)
+    fig_ipca_table.write_html("static/ipca_summary_table.html")
 
     # 13. Exportar observações ignoradas
     pd.DataFrame(skipped, columns=["Bond ID", "Obs Date", "Reason"]).to_csv("data/skipped_yields.csv", index=False)
