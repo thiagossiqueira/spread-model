@@ -122,6 +122,7 @@ if __name__ == "__main__":
     pivot_ipca = ipca_surface.pivot(index="obs_date", columns="tenor", values="yield").sort_index()
     fig_ipca_surface = plot_yield_curve_surface(pivot_ipca, source_text="Source: WLA B3 – cálculos próprios")
     fig_ipca_surface.write_html("static/ipca_surface.html")
+    print("Preview da superfície IPCA:\n", pivot_ipca.head())
 
     fig_ipca_table = show_ipca_summary_table(ipca_surface)
     fig_ipca_table.write_html("static/ipca_summary_table.html")
