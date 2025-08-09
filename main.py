@@ -1,6 +1,7 @@
 # main.py
 from src.utils.file_io import load_inputs
-from src.utils.interpolation import interpolate_di_surface
+from src.utils.interpolation import interpolate_di_surface, interpolate_surface
+
 from src.utils.plotting import (
     plot_surface_spread_with_bonds,
     plot_yield_curve_surface,
@@ -23,7 +24,7 @@ if __name__ == "__main__":
     surface = surface.dropna(subset=["yield", "tenor"])
     surface = surface[surface["yield"] > 0]
 
-    # 2.1. Remover contratos com volume igual a zero
+    # 3. Remover contratos com volume igual a zero
     if "volume" in surface.columns:
         surface["volume"] = pd.to_numeric(surface["volume"], errors="coerce")
         surface = surface[surface["volume"] > 0]
@@ -36,21 +37,17 @@ if __name__ == "__main__":
     )
     print("🧪 Curvas com mais tenores disponíveis:\n", curva_por_data.head())
 
-    # 3. Pivotar a curva para formato wide (um row por data, colunas = tenors)
+    # 4. Pivotar a curva para formato wide (um row por data, colunas = tenors)
     pivoted = surface.pivot(index="obs_date", columns="tenor", values="yield").sort_index()
 
-    # 4. Adicionar coluna curve_id (formato: yyyymmdd) para cada linha
+    # 5. Adicionar coluna curve_id (formato: yyyymmdd) para cada linha
     pivoted["curve_id"] = pivoted.index.strftime("%Y%m%d")
     pivoted = pivoted.reset_index().set_index("curve_id")
 
-    # 5. Interpolar a curva DI com os tenores alvo definidos
+    # 6. Interpolar a curva DI com os tenores alvo definidos
     yc_table = interpolate_di_surface(surface, CONFIG["TENORS"])
 
-    # 6. Criar diretórios de saída
-    os.makedirs("data", exist_ok=True)
-    os.makedirs("static", exist_ok=True)
-
-    # ✅ Gerar gráfico da curva DI interpolada (benchmark)
+    # 7. Gerar gráfico da superfície DI interpolada (benchmark)
     ordered_cols = [k for k, _ in sorted(CONFIG["TENORS"].items(), key=lambda x: x[1])]
     df_vis = yc_table[ordered_cols] if all(col in yc_table.columns for col in ordered_cols) else yc_table
 
@@ -67,13 +64,17 @@ if __name__ == "__main__":
     if table_di is not None:
         table_di.write_html("static/di_summary_table.html")
 
-    # 7. Construir janelas de observação
+    # 8. Construir janelas de observação
     obs_windows = build_observation_windows(corp_base, yields_ts, CONFIG["OBS_WINDOW"])
 
-    # 8. Calcular spreads
+    # 9. Calcular spreads
     corp_bonds, skipped = compute_spreads(corp_base, yields_ts, yc_table, obs_windows, CONFIG["TENORS"])
 
-    # 9. Construir matriz de spreads para gráfico 3D
+    # 10. Criar diretórios de saída
+    os.makedirs("data", exist_ok=True)
+    os.makedirs("static", exist_ok=True)
+
+    # 11. Construir matriz de spreads para gráfico 3D
     spread_surface = corp_bonds.pivot_table(
         index="OBS_DATE",
         columns="TENOR_BUCKET",
@@ -81,12 +82,12 @@ if __name__ == "__main__":
         aggfunc="mean"
     ).sort_index()
 
-    # 10. Ordenar colunas por valor numérico dos tenores
+    # 12. Ordenar colunas por valor numérico dos tenores
     tenor_order = sorted(CONFIG["TENORS"].items(), key=lambda x: x[1])
     ordered_columns = [k for k, _ in tenor_order if k in spread_surface.columns]
     spread_surface = spread_surface[ordered_columns]
 
-    # 11. Gerar gráfico 3D de spreads
+    # 13. Gerar gráfico 3D de spreads
     fig = plot_surface_spread_with_bonds(
         df_surface=spread_surface,
         audit=corp_bonds,
@@ -96,17 +97,20 @@ if __name__ == "__main__":
     )
     fig.write_html("static/spread_surface.html")
 
-    # 12. Tabela resumo
+    # 14. Tabela resumo de spreads
     table_fig = show_summary_table(corp_bonds)
     if table_fig is not None:
         table_fig.write_html("static/summary_table.html")
+
+
+
+
 
     # 16. Superfície e tabela do contrato ID x IPCA (WLA index)
     ipca_curve = pd.read_excel(
         CONFIG["WLA_CURVE_PATH"],
         sheet_name="only_values"
     )
-
     ipca_curve["Curve date"] = pd.to_datetime(ipca_curve["Curve date"])
     ipca_surface = ipca_curve.rename(columns={
         "Curve date": "obs_date",
@@ -119,15 +123,17 @@ if __name__ == "__main__":
     ipca_surface["curve_id"] = ipca_surface["generic_ticker_id"] + ipca_surface["obs_date"].dt.strftime("%Y%m%d")
     ipca_surface = ipca_surface.drop_duplicates(subset=["curve_id"], keep="last")
 
-    pivot_ipca = ipca_surface.pivot(index="obs_date", columns="tenor", values="yield").sort_index()
-    fig_ipca_surface = plot_yield_curve_surface(pivot_ipca, source_text="Source: WLA B3 – cálculos próprios")
+    ipca_interp = interpolate_surface(ipca_surface, CONFIG["WLA_TENORS"])
+    ipca_ordered = [k for k, _ in sorted(CONFIG["WLA_TENORS"].items(), key=lambda x: x[1])]
+    df_ipca_vis = ipca_interp[ipca_ordered] if all(c in ipca_interp.columns for c in ipca_ordered) else ipca_interp
+
+    fig_ipca_surface = plot_yield_curve_surface(df_ipca_vis, source_text="Source: WLA B3 – cálculos próprios")
     fig_ipca_surface.write_html("static/ipca_surface.html")
-    print("Preview da superfície IPCA:\n", pivot_ipca.head())
 
     fig_ipca_table = show_ipca_summary_table(ipca_surface)
     fig_ipca_table.write_html("static/ipca_summary_table.html")
 
-    # 13. Exportar observações ignoradas
+    # 17. Exportar observações ignoradas
     pd.DataFrame(skipped, columns=["Bond ID", "Obs Date", "Reason"]).to_csv("data/skipped_yields.csv", index=False)
 
     print(f"✅ {len(corp_bonds)} spreads calculados. {len(skipped)} observações ignoradas.")

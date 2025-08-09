@@ -25,6 +25,17 @@ CONFIG = {
         "1-month": 1.0 / 12,
     },
 
+    "WLA_TENORS": {
+        "3-month": 0.25,
+        "6-month": 0.5,
+        "1-year": 1.0,
+        "2-year": 2.0,
+        "3-year": 3.0,
+        "4-year": 4.0,
+        "5-year": 5.0
+    },
+
+
     "OBS_WINDOW": 11323  # total days since [(2025 - 1994) x 365.25] >>> CONFIG["OBS_WINDOW"] = int((pd.Timestamp.today() - pd.Timestamp("1994-01-01")).days)
 
 
