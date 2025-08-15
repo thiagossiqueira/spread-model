@@ -10,12 +10,19 @@ while not (REPO_ROOT / ".git").exists() and REPO_ROOT != REPO_ROOT.parent:
 CONFIG = {
     "CORP_PATH": REPO_ROOT / "datos_y_modelos" / "Domestic" / "brazil_domestic_corp_db.xlsx",
     "YA_PATH": REPO_ROOT / "datos_y_modelos" / "db" / "brazil_domestic_corp_bonds" / "ya.xlsx",
-    "HIST_CURVE_PATH": REPO_ROOT / "datos_y_modelos" / "db" / "one-day_interbank_deposit_futures_contract_di" / "hist_di_curve_contracts_db.xlsx",
+    "HIST_CURVE_PATH": REPO_ROOT / "datos_y_modelos" / "db" / "one-day_interbank_deposit_futures_contract_di" / "hist_di_curve_contracts_db.v1.xlsx",
     "WLA_CURVE_PATH": REPO_ROOT / "datos_y_modelos" / "db" / "id_x_ipca_spread_futures" / "hist_ipca_curve_contracts_db.xlsx",
 
 
 
     "TENORS": {
+        "12-year": 12.0,
+        "11-year": 11.0,
+        "10-year": 10.0,
+        "9-year": 9.0,
+        "8-year": 8.0,
+        "7-year": 7.0,
+        "6-year": 6.0,
         "5-year": 5.0,
         "3-year": 3.0,
         "2-year": 2.0,
@@ -23,6 +30,7 @@ CONFIG = {
         "6-month": 0.5,
         "3-month": 0.25,
         "1-month": 1.0 / 12,
+        "1-day": 1.0 / 252,
     },
 
     "WLA_TENORS": {
