@@ -39,6 +39,15 @@ if __name__ == "__main__":
 
     # 4. Pivotar a curva para formato wide (um row por data, colunas = tenors)
     surface = surface.drop_duplicates(subset=["obs_date", "tenor"], keep="last")
+
+    # Diagnóstico: encontrar duplicados que causam erro no pivot
+    dups = surface[surface.duplicated(subset=["obs_date", "tenor"], keep=False)]
+    if not dups.empty:
+        print("‼️ Entradas duplicadas para (obs_date, tenor):")
+        print(dups.sort_values(by=["obs_date", "tenor"]))
+        dups.to_csv("data/duplicated_surface.csv", index=False)
+
+
     pivoted = surface.pivot(index="obs_date", columns="tenor", values="yield").sort_index()
 
     # 5. Adicionar coluna curve_id (formato: yyyymmdd) para cada linha
