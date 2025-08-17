@@ -38,6 +38,7 @@ if __name__ == "__main__":
     print("🧪 Curvas com mais tenores disponíveis:\n", curva_por_data.head())
 
     # 4. Pivotar a curva para formato wide (um row por data, colunas = tenors)
+    surface = surface.drop_duplicates(subset=["obs_date", "tenor"], keep="last")
     pivoted = surface.pivot(index="obs_date", columns="tenor", values="yield").sort_index()
 
     # 5. Adicionar coluna curve_id (formato: yyyymmdd) para cada linha
