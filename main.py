@@ -27,7 +27,7 @@ if __name__ == "__main__":
     # 3. Remover contratos com volume igual a zero
     if "volume" in surface.columns:
         surface["volume"] = pd.to_numeric(surface["volume"], errors="coerce")
-        surface = surface[surface["volume"] > 0]
+        surface = surface[surface["volume"] > 1000]
 
     # Diagnóstico opcional: verificar curvas com múltiplos tenores por data
     curva_por_data = (
@@ -79,6 +79,9 @@ if __name__ == "__main__":
 
     # 9. Calcular spreads
     corp_bonds, skipped = compute_spreads(corp_base, yields_ts, yc_table, obs_windows, CONFIG["TENORS"])
+
+    #9.1. Filtrar bonds com corp yield igual a zero
+    corp_bonds = corp_bonds[corp_bonds["YAS_BOND_YLD"] != 0]
 
     # 10. Criar diretórios de saída
     os.makedirs("data", exist_ok=True)

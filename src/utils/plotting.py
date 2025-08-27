@@ -76,6 +76,8 @@ def show_summary_table(corp_bonds_df: pd.DataFrame):
         "id", "OBS_DATE", "YAS_BOND_YLD", "TENOR_YRS", "DI_YIELD", "SPREAD"
     ]].copy()
 
+    summary_table = summary_table[summary_table["YAS_BOND_YLD"] != 0]
+
     summary_table["YAS_BOND_YLD"] = summary_table["YAS_BOND_YLD"].round(2)
     summary_table["DI_YIELD"] = summary_table["DI_YIELD"].round(2)
     summary_table["SPREAD"] = summary_table["SPREAD"].round(2)
