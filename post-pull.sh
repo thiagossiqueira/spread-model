@@ -17,7 +17,6 @@ git config core.sparseCheckout true
 cat > .git/info/sparse-checkout <<EOF
 /*
 !datos_y_modelos/db/one-day_interbank_deposit_futures_contract_di/hist_di_curve_contracts_db.xlsx
-!datos_y_modelos/db/one-day_interbank_deposit_futures_contract_di/hist_di_curve_contracts_db.v1.xlsx
 !datos_y_modelos/db/brazil_domestic_equities/*
 !datos_y_modelos/db/brazil_domestic_corp_bonds/brazil_debentures_universe/Resultado/resultado_parte*
 EOF
