@@ -8,7 +8,7 @@ while not (REPO_ROOT / ".git").exists() and REPO_ROOT != REPO_ROOT.parent:
 
 # Caminhos centralizados para os arquivos de dados
 CONFIG = {
-    "CORP_PATH": REPO_ROOT / "datos_y_modelos" / "Domestic" / "brazil_domestic_corp_db.xlsx",
+    "CORP_PATH": REPO_ROOT / "datos_y_modelos" / "Domestic" / "universo_brazil_deb_des.xlsx",
     "YA_PATH": REPO_ROOT / "datos_y_modelos" / "db" / "brazil_domestic_corp_bonds" / "ya.xlsx",
     "HIST_CURVE_PATH": REPO_ROOT / "datos_y_modelos" / "db" / "one-day_interbank_deposit_futures_contract_di" / "hist_di_curve_contracts_db.v1.xlsx",
     "WLA_CURVE_PATH": REPO_ROOT / "datos_y_modelos" / "db" / "id_x_ipca_spread_futures" / "hist_ipca_curve_contracts_db.xlsx",
