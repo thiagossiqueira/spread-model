@@ -47,6 +47,20 @@ def show_wla_summary():
     return render_template("summary_iframe.html", chart="static/ipca_summary_table.html")
 
 
+@app.route("/summary-full")
+def summary_full():
+    with open("static/summary_table.html") as f:
+        content = f.read()
+    return render_template("summary_full.html", table_html=content)
+
+
+@app.route("/wla-summary-full")
+def wla_summary_full():
+    with open("static/ipca_summary_table.html") as f:
+        content = f.read()
+    return render_template("ipca_summary_full.html", table_html=content)
+
+
 @app.route("/download-summary")
 def download_summary():
     # Load and prepare data
