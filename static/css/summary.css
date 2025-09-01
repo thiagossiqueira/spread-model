@@ -1,0 +1,25 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+}
+
+.download-btn {
+  background-color: #1565c0;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.download-btn:hover {
+  background-color: #0d47a1;
+}
+
+table.dataTable thead input {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 12px;
+  padding: 3px;
+}

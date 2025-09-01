@@ -1,15 +1,36 @@
 {% extends "shared/base.html" %}
 {% block title %}Resumo DI{% endblock %}
 
-{% block content %}
-    <h2>Resumo DI com Filtros</h2>
-    <button onclick="exportTableToExcel('summaryTable')">Exportar para Excel</button>
-    <table id="summaryTable" class="display" style="width:100%">
-        {{ table_html|safe }}
-    </table>
-{% endblock %}
+{% block body %}
+<div class="container">
+  <h2 class="title is-4">Tabela Resumo DI</h2>
 
-{% block scripts %}
-    <script src="{{ url_for('static', filename='js/exportTable.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/datatableFilter.js') }}"></script>
+  <button class="download-btn" onclick="exportTableToExcel('summaryTable')">⬇ Exportar para Excel</button>
+  <br><br>
+
+  <table id="summaryTable" class="display compact nowrap" style="width:100%">
+    <thead>
+      <tr>
+        <th>Bond ID</th>
+        <th>Obs Date</th>
+        <th>Corp Yield (%)</th>
+        <th>Tenor (yrs)</th>
+        <th>DI Yield (%)</th>
+        <th>Spread (bp)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in summary_data %}
+      <tr>
+        <td>{{ row.id }}</td>
+        <td>{{ row.OBS_DATE.strftime('%Y-%m-%d') }}</td>
+        <td>{{ row.YAS_BOND_YLD | round(2) }}</td>
+        <td>{{ row.TENOR_YRS | round(2) }}</td>
+        <td>{{ row.DI_YIELD | round(2) }}</td>
+        <td>{{ row.SPREAD | round(2) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 {% endblock %}

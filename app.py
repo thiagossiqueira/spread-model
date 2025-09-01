@@ -9,6 +9,8 @@ from src.utils.interpolation import interpolate_di_surface
 import pandas as pd
 import io
 
+surface, corp_base, yields_ts = load_inputs(CONFIG)
+
 app = Flask(__name__, template_folder="templates")
 
 
@@ -49,9 +51,13 @@ def show_wla_summary():
 
 @app.route("/summary-full")
 def summary_full():
-    with open("static/summary_table.html") as f:
-        content = f.read()
-    return render_template("summary_full.html", table_html=content)
+
+    obs_windows = build_observation_windows(corp_base, yields_ts, CONFIG["OBS_WINDOW"])
+    yc_table = interpolate_di_surface(surface, CONFIG["TENORS"])
+    corp_bonds, _ = compute_spreads(corp_base, yields_ts, yc_table, obs_windows, CONFIG["TENORS"])
+    corp_bonds = corp_bonds[corp_bonds["YAS_BOND_YLD"] != 0]
+
+    return render_template("summary_full.html", summary_data=corp_bonds.to_dict(orient="records"))
 
 
 @app.route("/wla-summary-full")
