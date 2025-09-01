@@ -35,11 +35,15 @@ spread-model/
 │   └── Domestic/
 │       └── brazil_domestic_corp_db.xlsx     # Metadata de bonos corporativos brasileños
 │
-├── static/                      # Visualizaciones exportadas en HTML
-│   ├── spread_surface.html      # Gráfico 3D de spreads (Plotly Surface)
-│   └── summary_table.html       # Tabla resumen comparativa
-│
+├── static/            # Visualizaciones exportadas en HTML
+│   ├── css/                     
+│   │   ├── style.css  # para o layout global
+│   ├── js/                     
+│   │   ├── datatableFilter.js
+│   │   └── exportTable.js
+
 ├── templates/                   # Plantillas HTML para la app Flask
+│   ├── base.html
 │   ├── index.html
 │   ├── spread_iframe.html
 │   └── summary_iframe.html

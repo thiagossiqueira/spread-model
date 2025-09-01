@@ -1,0 +1,17 @@
+{% extends "shared/base.html" %}
+
+{% block title %}Resumo Spreads{% endblock %}
+
+{% block content %}
+<h2>Resumo dos Spreads</h2>
+<button class="download-btn" onclick="downloadSummaryTable()">📥 Exportar Excel</button>
+
+<div id="table-container">
+  {% include "static/summary_table.html" %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/exportTable.js') }}"></script>
+<script src="{{ url_for('static', filename='js/datatableFilter.js') }}"></script>
+{% endblock %}

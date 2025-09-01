@@ -1,19 +1,12 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-  <meta charset="UTF-8">
-  <title>Resumo</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script src="{{ url_for('static', filename='js/exportTable.js') }}"></script>
-</head>
-<body>
-  <h2>📊 Tabela Resumo</h2>
+{% extends "shared/base.html" %}
 
-  <iframe id="tableFrame" src="{{ chart }}" onload="enableExport()" style="width: 100%; height: 600px;"></iframe>
+{% block title %}Resumo DI{% endblock %}
 
+{% block content %}
+  <h2 class="title is-4">Tabela Resumo</h2>
+  <iframe src="{{ chart }}" id="summaryIframe" width="100%" height="600" frameborder="0"></iframe>
   <br>
-  <button onclick="exportTableToExcel()">⬇️ Exportar para Excel</button>
-  <a href="/">← Voltar ao início</a>
-</body>
-</html>
+  <button class="download-btn" onclick="exportToExcel()">⬇ Exportar para Excel</button>
+  <br><br>
+  <a href="/" class="button is-light">← Voltar ao início</a>
+{% endblock %}

@@ -1,13 +1,10 @@
-function exportTableToExcel() {
-  const iframe = document.querySelector("iframe");
-  const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-  const table = iframeDoc.querySelector("table");
-
+function downloadSummaryTable() {
+  const table = document.querySelector("#summary-table");
   if (!table) {
     alert("Tabela não carregada ainda.");
     return;
   }
 
-  const wb = XLSX.utils.table_to_book(table);
-  XLSX.writeFile(wb, "summary_table.xlsx");
+  let wb = XLSX.utils.table_to_book(table, { sheet: "Resumo" });
+  XLSX.writeFile(wb, "resumo_spread.xlsx");
 }
