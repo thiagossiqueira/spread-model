@@ -83,6 +83,12 @@ if __name__ == "__main__":
     #9.1. Filtrar bonds com corp yield igual a zero
     corp_bonds = corp_bonds[corp_bonds["YAS_BOND_YLD"] != 0]
 
+    #9.2. Salvar a tabela resumo em Excel para uso posterior no Flask
+    df_excel = corp_bonds.copy()
+    df_excel = df_excel[["id", "OBS_DATE", "YAS_BOND_YLD", "TENOR_YRS", "DI_YIELD", "SPREAD"]]
+    df_excel.columns = ["Bond ID", "Obs Date", "Corp Yield (%)", "Tenor (yrs)", "DI Yield (%)", "Spread (bp)"]
+    df_excel.to_excel("data/corp_bonds_summary.xlsx", index=False)
+
     # 10. Criar diretórios de saída
     os.makedirs("data", exist_ok=True)
     os.makedirs("static", exist_ok=True)
@@ -150,3 +156,4 @@ if __name__ == "__main__":
     pd.DataFrame(skipped, columns=["Bond ID", "Obs Date", "Reason"]).to_csv("data/skipped_yields.csv", index=False)
 
     print(f"✅ {len(corp_bonds)} spreads calculados. {len(skipped)} observações ignoradas.")
+

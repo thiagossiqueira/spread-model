@@ -9,7 +9,9 @@ from src.utils.interpolation import interpolate_di_surface
 import pandas as pd
 import io
 
-surface, corp_base, yields_ts = load_inputs(CONFIG)
+#surface, corp_base, yields_ts = load_inputs(CONFIG)
+
+df = pd.read_excel("data/corp_bonds_summary.xlsx")
 
 app = Flask(__name__, template_folder="templates")
 
@@ -51,11 +53,8 @@ def show_wla_summary():
 
 @app.route("/summary-full")
 def summary_full():
-
-    obs_windows = build_observation_windows(corp_base, yields_ts, CONFIG["OBS_WINDOW"])
-    yc_table = interpolate_di_surface(surface, CONFIG["TENORS"])
-    corp_bonds, _ = compute_spreads(corp_base, yields_ts, yc_table, obs_windows, CONFIG["TENORS"])
-    corp_bonds = corp_bonds[corp_bonds["YAS_BOND_YLD"] != 0]
+    df = pd.read_excel("data/corp_bonds_summary.xlsx")
+    corp_bonds = df  # já está filtrado e renomeado
 
     return render_template("summary_full.html", summary_data=corp_bonds.to_dict(orient="records"))
 
