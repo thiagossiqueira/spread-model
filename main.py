@@ -82,7 +82,7 @@ if __name__ == "__main__":
 
     #9.1. Filtrar bonds com corp yield igual a zero
     corp_bonds = corp_bonds[corp_bonds["YAS_BOND_YLD"] != 0]
-    corp_bonds = corp_bonds[corp_bonds["SPREAD"] < 10]  # Remove spreads acima de 10bps
+    corp_bonds = corp_bonds[(corp_bonds["SPREAD"] >= -10) & (corp_bonds["SPREAD"] <= 10)]
 
     #9.2. Salvar a tabela resumo em Excel para uso posterior no Flask
     df_excel = corp_bonds.copy()
