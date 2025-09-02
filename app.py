@@ -76,5 +76,17 @@ def download_summary():
     )
 
 
+@app.route("/summary/<tipo>")
+def summary_tipo(tipo):
+    if tipo == "di":
+        df = pd.read_excel("data/corp_bonds_summary.xlsx")
+    elif tipo == "ipca":
+        df = pd.read_excel("data/corp_bonds_ipca_summary.xlsx")
+    else:
+        return "Tipo inválido", 400
+
+    return render_template("summary_full.html", summary_data=df.to_dict(orient="records"))
+
+
 if __name__ == "__main__":
     app.run(debug=True)

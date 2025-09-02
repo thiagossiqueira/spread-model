@@ -1,4 +1,5 @@
 # main.py
+from src.utils.filters import filter_corporate_universe, anomaly_filtering_results
 from src.utils.file_io import load_inputs
 from src.utils.interpolation import interpolate_di_surface, interpolate_surface
 
@@ -17,8 +18,16 @@ import pandas as pd
 import os
 
 if __name__ == "__main__":
-    # 1. Carregar dados
-    surface, corp_base, yields_ts = load_inputs(CONFIG)
+
+    # Criar diretórios de saída
+    os.makedirs("data", exist_ok=True)
+    os.makedirs("static", exist_ok=True)
+
+    # 1. Load and filter
+    surface, corp_base_raw, yields_ts = load_inputs(CONFIG)
+
+    corp_base = filter_corporate_universe(corp_base_raw, inflation_linked="N")
+    corp_base_ipca = filter_corporate_universe(corp_base_raw, inflation_linked="Y")
 
     # 2. Limpar dados e garantir que há curvas com múltiplos tenores
     surface = surface.dropna(subset=["yield", "tenor"])
@@ -79,10 +88,11 @@ if __name__ == "__main__":
 
     # 9. Calcular spreads
     corp_bonds, skipped = compute_spreads(corp_base, yields_ts, yc_table, obs_windows, CONFIG["TENORS"])
+    corp_bonds_ipca, skipped_ipca = compute_spreads(corp_base_ipca, yields_ts, yc_table, obs_windows, CONFIG["WLA_TENORS"])
 
-    #9.1. Filtrar bonds com corp yield igual a zero
-    corp_bonds = corp_bonds[corp_bonds["YAS_BOND_YLD"] != 0]
-    corp_bonds = corp_bonds[(corp_bonds["SPREAD"] >= -10) & (corp_bonds["SPREAD"] <= 10)]
+    #9.1. Filtrar anomalias (bonds com corp yield igual a zero or crazy spreads)
+    corp_bonds = anomaly_filtering_results(corp_bonds)
+    corp_bonds_ipca = anomaly_filtering_results(corp_bonds_ipca)
 
     #9.2. Salvar a tabela resumo em Excel para uso posterior no Flask
     df_excel = corp_bonds.copy()
@@ -90,9 +100,10 @@ if __name__ == "__main__":
     df_excel.columns = ["Bond ID", "Obs Date", "Corp Yield (%)", "Tenor (yrs)", "DI Yield (%)", "Spread (bp)"]
     df_excel.to_excel("data/corp_bonds_summary.xlsx", index=False)
 
-    # 10. Criar diretórios de saída
-    os.makedirs("data", exist_ok=True)
-    os.makedirs("static", exist_ok=True)
+    df_excel = corp_bonds_ipca.copy()
+    df_excel = df_excel[["id", "OBS_DATE", "YAS_BOND_YLD", "TENOR_YRS", "DI_YIELD", "SPREAD"]]
+    df_excel.columns = ["Bond ID", "Obs Date", "Corp Yield (%)", "Tenor (yrs)", "DI Yield (%)", "Spread (bp)"]
+    df_excel.to_excel("data/corp_bonds_ipca_summary.xlsx", index=False)
 
     # 11. Construir matriz de spreads para gráfico 3D
     spread_surface = corp_bonds.pivot_table(
@@ -121,9 +132,6 @@ if __name__ == "__main__":
     table_fig = show_summary_table(corp_bonds)
     if table_fig is not None:
         table_fig.write_html("static/summary_table.html")
-
-
-
 
 
     # 16. Superfície e tabela do contrato ID x IPCA (WLA index)
@@ -155,6 +163,12 @@ if __name__ == "__main__":
 
     # 17. Exportar observações ignoradas
     pd.DataFrame(skipped, columns=["Bond ID", "Obs Date", "Reason"]).to_csv("data/skipped_yields.csv", index=False)
+    pd.DataFrame(skipped_ipca, columns=["Bond ID", "Obs Date", "Reason"]).to_csv("data/skipped_ipca_yields.csv",
+                                                                                 index=False)
 
-    print(f"✅ {len(corp_bonds)} spreads calculados. {len(skipped)} observações ignoradas.")
+    print(f"🔍 Corp base (DI): {len(corp_base_raw)} total → {len(corp_base)} after filter_corporate_universe")
+    print(f"🔍 Corp base (IPCA): {len(corp_base_raw)} total → {len(corp_base_ipca)} after filter_corporate_universe")
+    print(f"📊 Spreads calculated (DI): {len(corp_bonds)} | Skipped: {len(skipped)}")
+    print(f"📊 Spreads calculated (IPCA): {len(corp_bonds_ipca)} | Skipped: {len(skipped_ipca)}")
+
 
