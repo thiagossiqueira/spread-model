@@ -26,8 +26,13 @@ if __name__ == "__main__":
     # 1. Load and filter
     surface, corp_base_raw, yields_ts = load_inputs(CONFIG)
 
+    print(f"🧮 DI Spreads calculados (antes do filtro): {len(corp_base_raw)}")
     corp_base = filter_corporate_universe(corp_base_raw, inflation_linked="N")
+    print(f"🧮 DI Spreads calculados (depois do filtro): {len(corp_base)}")
+
+    print(f"🧮 IPCA Spreads calculados (antes do filtro): {len(corp_base_raw)}")
     corp_base_ipca = filter_corporate_universe(corp_base_raw, inflation_linked="Y")
+    print(f"🧮 IPCA Spreads calculados (depois do filtro): {len(corp_base)}")
 
     # 2. Limpar dados e garantir que há curvas com múltiplos tenores
     surface = surface.dropna(subset=["yield", "tenor"])
