@@ -56,7 +56,6 @@ if __name__ == "__main__":
         print(dups.sort_values(by=["obs_date", "tenor"]))
         dups.to_csv("data/duplicated_surface.csv", index=False)
 
-
     pivoted = surface.pivot(index="obs_date", columns="tenor", values="yield").sort_index()
 
     # 5. Adicionar coluna curve_id (formato: yyyymmdd) para cada linha
@@ -90,7 +89,9 @@ if __name__ == "__main__":
     corp_bonds, skipped = compute_spreads(corp_base, yields_ts, yc_table, obs_windows, CONFIG["TENORS"])
 
     #9.1. Filtrar anomalias (bonds com corp yield igual a zero or crazy spreads)
+    print(f"🧮 DI Spreads calculados (antes do filtro): {len(corp_bonds)}")
     corp_bonds = anomaly_filtering_results(corp_bonds)
+    print(f"🧼 DI Spreads restantes após filtros de anomalias: {len(corp_bonds)}")
 
     #9.2. Salvar a tabela resumo em Excel para uso posterior no Flask
     df_excel = corp_bonds.copy()
@@ -154,14 +155,14 @@ if __name__ == "__main__":
     fig_ipca_table = show_ipca_summary_table(ipca_surface)
     fig_ipca_table.write_html("static/ipca_summary_table.html")
 
-    # yc_table = interpolate_di_surface
-    # ipca_interp = interpolate_surface
 
     # 9. Calcular spreads IPCA
     corp_bonds_ipca, skipped_ipca = compute_spreads(corp_base_ipca, yields_ts, ipca_interp, obs_windows, CONFIG["WLA_TENORS"])
 
     # 9.1. Filtrar anomalias (bonds com corp yield igual a zero or crazy spreads)
+    print(f"🧮 IPCA Spreads calculados (antes do filtro): {len(corp_bonds)}")
     corp_bonds_ipca = anomaly_filtering_results(corp_bonds_ipca)
+    print(f"🧼 IPCA Spreads restantes após filtros de anomalias: {len(corp_bonds)}")
 
     # 9.2. Salvar a tabela resumo em Excel para uso posterior no Flask
     df_excel = corp_bonds_ipca.copy()
