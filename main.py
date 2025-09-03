@@ -86,24 +86,17 @@ if __name__ == "__main__":
     # 8. Construir janelas de observação
     obs_windows = build_observation_windows(corp_base, yields_ts, CONFIG["OBS_WINDOW"])
 
-    # 9. Calcular spreads
+    # 9. Calcular spreads DI
     corp_bonds, skipped = compute_spreads(corp_base, yields_ts, yc_table, obs_windows, CONFIG["TENORS"])
-    corp_bonds_ipca, skipped_ipca = compute_spreads(corp_base_ipca, yields_ts, yc_table, obs_windows, CONFIG["WLA_TENORS"])
 
     #9.1. Filtrar anomalias (bonds com corp yield igual a zero or crazy spreads)
     corp_bonds = anomaly_filtering_results(corp_bonds)
-    corp_bonds_ipca = anomaly_filtering_results(corp_bonds_ipca)
 
     #9.2. Salvar a tabela resumo em Excel para uso posterior no Flask
     df_excel = corp_bonds.copy()
     df_excel = df_excel[["id", "OBS_DATE", "YAS_BOND_YLD", "TENOR_YRS", "DI_YIELD", "SPREAD"]]
     df_excel.columns = ["Bond ID", "Obs Date", "Corp Yield (%)", "Tenor (yrs)", "DI Yield (%)", "Spread (bp)"]
     df_excel.to_excel("data/corp_bonds_summary.xlsx", index=False)
-
-    df_excel = corp_bonds_ipca.copy()
-    df_excel = df_excel[["id", "OBS_DATE", "YAS_BOND_YLD", "TENOR_YRS", "DI_YIELD", "SPREAD"]]
-    df_excel.columns = ["Bond ID", "Obs Date", "Corp Yield (%)", "Tenor (yrs)", "DI Yield (%)", "Spread (bp)"]
-    df_excel.to_excel("data/corp_bonds_ipca_summary.xlsx", index=False)
 
     # 11. Construir matriz de spreads para gráfico 3D
     spread_surface = corp_bonds.pivot_table(
@@ -160,6 +153,55 @@ if __name__ == "__main__":
 
     fig_ipca_table = show_ipca_summary_table(ipca_surface)
     fig_ipca_table.write_html("static/ipca_summary_table.html")
+
+    # yc_table = interpolate_di_surface
+    # ipca_interp = interpolate_surface
+
+    # 9. Calcular spreads IPCA
+    corp_bonds_ipca, skipped_ipca = compute_spreads(corp_base_ipca, yields_ts, ipca_interp, obs_windows, CONFIG["WLA_TENORS"])
+
+    # 9.1. Filtrar anomalias (bonds com corp yield igual a zero or crazy spreads)
+    corp_bonds_ipca = anomaly_filtering_results(corp_bonds_ipca)
+
+    # 9.2. Salvar a tabela resumo em Excel para uso posterior no Flask
+    df_excel = corp_bonds_ipca.copy()
+    df_excel = df_excel[["id", "OBS_DATE", "YAS_BOND_YLD", "TENOR_YRS", "DI_YIELD", "SPREAD"]]
+    df_excel.columns = ["Bond ID", "Obs Date", "Corp Yield (%)", "Tenor (yrs)", "DI Yield (%)", "Spread (bp)"]
+    df_excel.to_excel("data/corp_bonds_ipca_summary.xlsx", index=False)
+
+
+
+
+    # 11. Construir matriz de spreads para gráfico 3D
+    IPCA_spread_surface = corp_bonds_ipca.pivot_table(
+        index="OBS_DATE",
+        columns="TENOR_BUCKET",
+        values="SPREAD",
+        aggfunc="mean"
+    ).sort_index()
+
+    # 12. Ordenar colunas por valor numérico dos tenores
+    tenor_order = sorted(CONFIG["TENORS"].items(), key=lambda x: x[1])
+    ordered_columns = [k for k, _ in tenor_order if k in IPCA_spread_surface.columns]
+    IPCA_spread_surface = IPCA_spread_surface[ordered_columns]
+
+    # 13. Gerar gráfico 3D de spreads
+    IPCA_fig = plot_surface_spread_with_bonds(
+        df_surface=IPCA_spread_surface,
+        audit=corp_bonds_ipca,
+        title="Corporate vs. IPCA Spread Surface (Filtered Universe with Point-in-Time Yields)",
+        zmin=-200,
+        zmax=2000
+    )
+    IPCA_fig.write_html("static/IPCA_spread_surface.html")
+
+    # 14. Tabela resumo de IPCA spreads
+    IPCA_table_fig = show_summary_table(corp_bonds_ipca)
+    if IPCA_table_fig is not None:
+        IPCA_table_fig.write_html("static/summary_IPCA_table.html")
+
+
+
 
     # 17. Exportar observações ignoradas
     pd.DataFrame(skipped, columns=["Bond ID", "Obs Date", "Reason"]).to_csv("data/skipped_yields.csv", index=False)
