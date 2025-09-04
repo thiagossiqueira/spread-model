@@ -21,7 +21,9 @@ def filter_corporate_universe(df: pd.DataFrame, inflation_linked: str = "N") -> 
     df = df[df['CRNCY'].isin(['BRL'])]
     print(f"➡ Após filtrar CRNCY='BRL': {len(df)}")
 
-    df = df[df['INFLATION_LINKED_INDICATOR'].isin([inflation_linked])]
+    print("🧪 Valores únicos em INFLATION_LINKED_INDICATOR:", df["INFLATION_LINKED_INDICATOR"].unique())
+    df["INFLATION_LINKED_INDICATOR"] = df["INFLATION_LINKED_INDICATOR"].astype(str).str.strip().str.upper()
+    df = df[df["INFLATION_LINKED_INDICATOR"].isin([inflation_linked])]
     print(f"➡ Após filtrar INFLATION_LINKED_INDICATOR={inflation_linked}: {len(df)}")
 
     df['TOT_DEBT_TO_EBITDA'] = pd.to_numeric(df['TOT_DEBT_TO_EBITDA'], errors='coerce')
