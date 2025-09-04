@@ -15,8 +15,8 @@ def filter_corporate_universe(df: pd.DataFrame, inflation_linked: str = "N") -> 
     df = df[df['CPN_TYP'].isin(['FIXED'])]
     print(f"➡ Após filtrar CPN_TYP='FIXED': {len(df)}")
 
-    df = df[df['MTY_TYP'].isin(['AT MATURITY'])]
-    print(f"➡ Após filtrar MTY_TYP='AT MATURITY': {len(df)}")
+    # df = df[df['MTY_TYP'].isin(['AT MATURITY'])]
+    # print(f"➡ Após filtrar MTY_TYP='AT MATURITY': {len(df)}")
 
     df = df[df['CRNCY'].isin(['BRL'])]
     print(f"➡ Após filtrar CRNCY='BRL': {len(df)}")
