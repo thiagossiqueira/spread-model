@@ -19,8 +19,16 @@ def filter_corporate_universe(df: pd.DataFrame, inflation_linked: str = "N") -> 
 
     print("🧪 Valores únicos em INFLATION_LINKED_INDICATOR:", df["INFLATION_LINKED_INDICATOR"].unique())
     df = df.copy()
-    df["INFLATION_LINKED_INDICATOR"] = df["INFLATION_LINKED_INDICATOR"].astype(str).str.strip().str.upper()
-    df = df[df["INFLATION_LINKED_INDICATOR"].isin([inflation_linked])]
+
+    # Normalize and filter inflation-linked field
+    df["INFLATION_LINKED_INDICATOR"] = (
+        df["INFLATION_LINKED_INDICATOR"]
+        .astype(str)
+        .str.strip()
+        .str.upper()
+    )
+    print("🧪 Valores únicos normalizados em INFLATION_LINKED_INDICATOR:", df["INFLATION_LINKED_INDICATOR"].unique())
+    df = df[df["INFLATION_LINKED_INDICATOR"] == inflation_linked.strip().upper()]
     print(f"➡ Após filtrar INFLATION_LINKED_INDICATOR={inflation_linked}: {len(df)}")
 
     df = df.copy()
