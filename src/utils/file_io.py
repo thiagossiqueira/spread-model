@@ -16,15 +16,7 @@ def load_yield_surface(path):
 
 def load_corp_bond_data(path):
     df = pd.read_excel(path, sheet_name="db_values_only")
-    df = df[~df['CLASSIFICATION_LEVEL_4_NAME'].str.startswith("Government", na=False)]
-    df = df[~df['industry_sector'].isin(['Financial'])]
-    df = df[df['CPN_TYP'].isin(['FIXED'])]
-    df = df[df['MTY_TYP'].isin(['AT MATURITY'])]
-    df = df[df['CRNCY'].isin(['BRL'])]
-    df['TOT_DEBT_TO_EBITDA'] = pd.to_numeric(df['TOT_DEBT_TO_EBITDA'], errors='coerce')
-    df = df[df['TOT_DEBT_TO_EBITDA'].notna()]
-    df = df[df['INFLATION_LINKED_INDICATOR'].isin(['Y'])]
-    df["MATURITY"] = pd.to_datetime(df["MATURITY"])
+    df["MATURITY"] = pd.to_datetime(df["MATURITY"], errors="coerce")
     df["id"] = df["id"].astype(str).str.strip()
     return df
 
@@ -55,9 +47,18 @@ def load_inputs(config):
 
     # Load corporate yield time series
     yields_ts = load_yield_surface(config["YA_PATH"])
-    yields_ts.columns = yields_ts.columns.astype(str).str.strip()
 
-    # Keep only bonds with matching time series
+    # Normalize columns: remove ' Corp' suffix and strip
+    yields_ts.columns = (
+        yields_ts.columns.astype(str)
+        .str.strip()
+        .str.replace(" Corp", "", regex=False)
+    )
+
+    # Normalize bond IDs to match
+    corp_data["id"] = corp_data["id"].astype(str).str.strip()
+
+    # Cross-match: keep only bonds with pricing history
     corp_data = corp_data[corp_data["id"].isin(yields_ts.columns)]
 
     return surface, corp_data, yields_ts
