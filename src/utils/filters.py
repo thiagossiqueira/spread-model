@@ -50,7 +50,16 @@ def get_ids_with_prices(price_file_path: Path) -> set:
        Ignora ativos que não são precificados pela ANBIMA, portanto, não existem informações relacionadas aos preços e taxas indicativas.
     """
     df = pd.read_excel(price_file_path, sheet_name="ya_values_only", usecols="A")
-    return set(df["id"].astype(str).str.strip().unique())
+
+    ya = df.dropna(subset=["YIELD"])
+    ids_com_precos = ya["id"].astype(str).str.strip().unique()
+    print(f"🔍 IDs com pelo menos um preço (YA): {len(ids_com_precos)}")
+
+    df["id"] = df["id"].astype(str).str.strip()
+    df = df[df["id"].isin(ids_com_precos)]
+    print(f"✅ Após cruzar com YA: {len(df)}")
+
+    return set(df)
 
 
 def anomaly_filtering_results(df: pd.DataFrame) -> pd.DataFrame:
