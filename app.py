@@ -1,5 +1,6 @@
 # app.py
 from flask import Flask, render_template, send_file
+from routes.filters_routes import filters_blueprint
 from pathlib import Path
 from src.config import CONFIG
 from src.utils.file_io import load_inputs
@@ -14,6 +15,8 @@ import io
 df = pd.read_excel("data/corp_bonds_summary.xlsx")
 
 app = Flask(__name__, template_folder="templates")
+
+app.register_blueprint(filters_blueprint)
 
 
 @app.route("/")

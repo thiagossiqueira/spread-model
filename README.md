@@ -43,6 +43,7 @@ spread-model/
 │   │   └── exportTable.js
 
 ├── templates/                   # Plantillas HTML para la app Flask
+│   ├── filters.html
 │   ├── base.html
 │   ├── index.html
 │   ├── spread_iframe.html

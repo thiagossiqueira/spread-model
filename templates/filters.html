@@ -1,0 +1,36 @@
+{# templates/filters.html #}
+{% extends "base.html" %}
+
+{% block title %}Filtros Interativos{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+  <h3 class="title">Aplicar Filtros à Base de Debêntures</h3>
+
+  <form method="POST">
+    <label><input type="checkbox" name="exclude_government" checked> Excluir Government</label><br>
+    <label><input type="checkbox" name="exclude_financial" checked> Excluir Financial</label><br>
+
+    <label>Indexação:</label>
+    <select name="inflation">
+      <option value="N">Nominal</option>
+      <option value="Y">IPCA</option>
+    </select><br>
+
+    <label>Tipo de Cupom:</label>
+    <select name="cpn" multiple>
+      {% for val in unique_cpns %}
+        <option value="{{ val }}">{{ val }}</option>
+      {% endfor %}
+    </select><br>
+
+    <button class="btn btn-primary mt-2" type="submit">Aplicar Filtros</button>
+  </form>
+
+  {% if preview %}
+    <hr>
+    <h5>Pré-visualização (50 primeiros registros)</h5>
+    <div>{{ preview|safe }}</div>
+  {% endif %}
+</div>
+{% endblock %}
