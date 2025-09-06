@@ -1,7 +1,13 @@
 import pandas as pd
 from calendars.daycounts import DayCounts
 from config import CONFIG
-from utils.file_io import load_inputs
+#from utils.file_io import load_inputs
+from src.utils.file_io import (
+load_corp_bond_data,
+load_yield_surface,
+load_di_surface,
+load_ipca_surface,
+)
 from utils.interpolation import interpolate_di_surface
 from finmath.termstructure.curve_models import flat_forward_interpolation
 import numpy as np
@@ -46,7 +52,7 @@ def test_interpolate_di_surface_flat_forward():
 
 
 def test_taxas_e_terms_corretos_para_2025_06_30():
-    surface, _, _ = load_inputs(CONFIG)
+    surface, _, _ = load_di_surface(CONFIG)
 
     surface = surface.reset_index(drop=True)
     surface = surface[surface["obs_date"] == pd.Timestamp("2025-06-30")].copy()

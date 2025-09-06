@@ -1,12 +1,18 @@
 # tests/test_integration_pipeline.py
 
 import pandas as pd
-from utils.file_io import load_inputs
+#from utils.file_io import load_inputs
+from src.utils.file_io import (
+load_corp_bond_data,
+load_yield_surface,
+load_di_surface,
+load_ipca_surface,
+)
 from utils.interpolation import interpolate_di_surface
 from config import CONFIG
 
 def test_load_and_interpolate_produces_some_valid_curves():
-    surface, _, _ = load_inputs(CONFIG)
+    surface, _, _ = load_di_surface(CONFIG)
 
     print("Total curvas:", len(surface))
     print("Datas únicas:", surface["obs_date"].nunique())
