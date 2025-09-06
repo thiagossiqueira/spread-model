@@ -14,12 +14,8 @@ def load_yield_surface(path):
     df["OBS_DATE"] = pd.to_datetime(df["OBS_DATE"])
     df = df.set_index("OBS_DATE").sort_index()
 
-    # Enhancement crítico: remover " Corp" dos headers
-    df.columns = (
-        df.columns.astype(str)
-        .str.strip()
-        .str.replace(" Corp", "", regex=False)
-    )
+    # NÃO remover " Corp" — IDs já estão padronizados
+    df.columns = df.columns.astype(str).str.strip()
     return df
 
 def load_corp_bond_data(path):
@@ -29,7 +25,7 @@ def load_corp_bond_data(path):
     return df
 
 def load_inputs(config):
-    # Load DI curve
+    # DI Surface
     curve_df = pd.read_excel(config["HIST_CURVE_PATH"], sheet_name="only_values")
     curve_df["Curve date"] = pd.to_datetime(curve_df["Curve date"])
 
@@ -50,14 +46,22 @@ def load_inputs(config):
     surface["curve_id"] = surface["generic_ticker_id"] + surface["obs_date"].dt.strftime("%Y%m%d")
     surface = surface.drop_duplicates(subset=["curve_id"], keep="last")
 
-    # Metadados
+    # Load corp metadata + yields
     corp_data = load_corp_bond_data(config["CORP_PATH"])
-
-    # Time series de yields
     yields_ts = load_yield_surface(config["YA_PATH"])
 
-    # Filtrar apenas os ativos com preços disponíveis
+    # Validar apenas os IDs com preços históricos
     valid_ids = set(yields_ts.columns)
     corp_data = corp_data[corp_data["id"].isin(valid_ids)]
+
+    # 👇 Diagnóstico: exibir conteúdo das bases carregadas
+    print("\n file_io.py: surface.tail(10):")
+    print(surface.tail(10))
+
+    print("\n file_io.py:  corp_data.tail(10):")
+    print(corp_data.tail(10))
+
+    print("\n file_io.py:  yields_ts.tail(10):")
+    print(yields_ts.tail(10).iloc[:, :5])  # mostra só as 5 primeiras colunas para não estourar terminal
 
     return surface, corp_data, yields_ts
