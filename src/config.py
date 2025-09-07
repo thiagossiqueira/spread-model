@@ -14,7 +14,6 @@ CONFIG = {
     "WLA_CURVE_PATH": REPO_ROOT / "datos_y_modelos" / "db" / "id_x_ipca_spread_futures" / "hist_ipca_curve_contracts_db.xlsx",
 
 
-
     "TENORS": {
         "12-year": 12.0,
         "11-year": 11.0,

@@ -12,7 +12,7 @@ from utils.interpolation import interpolate_di_surface
 from config import CONFIG
 
 def test_load_and_interpolate_produces_some_valid_curves():
-    surface, _, _ = load_di_surface(CONFIG)
+    surface, _, _ = load_di_surface(CONFIG["HIST_CURVE_PATH"])
 
     print("Total curvas:", len(surface))
     print("Datas únicas:", surface["obs_date"].nunique())
