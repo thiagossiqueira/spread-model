@@ -11,8 +11,8 @@ load_ipca_surface,
 dc = DayCounts("bus/252", calendar="cdr_anbima")
 
 def test_taxas_e_terms_corretos_para_2025_06_30():
-    surface, _, _ = load_di_surface(CONFIG["HIST_CURVE_PATH"])
 
+    surface = load_di_surface(CONFIG["HIST_CURVE_PATH"])
     surface = surface.reset_index(drop=True)
     surface = surface[surface["obs_date"] == pd.Timestamp("2025-06-30")].copy()
     surface["curve_id"] = surface["generic_ticker_id"] + surface["obs_date"].dt.strftime("%Y%m%d")
