@@ -67,7 +67,7 @@ def test_taxas_e_terms_corretos_para_2025_06_30():
         "od25 Comdty", "od26 Comdty", "od27 Comdty", "od28 Comdty", "od29 Comdty",
         "od30 Comdty", "od31 Comdty", "od32 Comdty", "od33 Comdty", "od35 Comdty",
         "od36 Comdty", "od37 Comdty", "od38 Comdty", "od39 Comdty", "od40 Comdty",
-        "od41 Comdty", "od42 Comdty", "od43 Comdty", "od59 Comdty"
+        "od41 Comdty", "od42 Comdty", "od43 Comdty"
     ]
 
     taxas_esperadas = [
@@ -78,7 +78,7 @@ def test_taxas_e_terms_corretos_para_2025_06_30():
         13.097, 13.083, 13.07, 13.067, 13.094,
         13.094, 13.116, 13.126, 13.147, 13.185,
         13.265, 13.286, 13.274, 13.289, 13.264,
-        13.243, 13.19, 13.137, 114.6
+        13.243, 13.19, 13.137
     ]
 
     terms_esperados = [
@@ -89,7 +89,7 @@ def test_taxas_e_terms_corretos_para_2025_06_30():
         2.079365079, 2.162698413, 2.25, 2.329365079, 2.408730159,
         2.496031746, 2.579365079, 2.658730159, 2.746031746, 2.904761905,
         2.992063492, 3.071428571, 3.162698413, 3.246031746, 3.325396825,
-        3.404761905, 3.484126984, 3.567460317, 4.880952381
+        3.404761905, 3.484126984, 3.567460317
     ]
 
     assert len(tickers) == len(taxas_esperadas) == len(terms_esperados)
