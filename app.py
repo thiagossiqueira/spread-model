@@ -1,5 +1,5 @@
 # app.py
-from flask import Flask, render_template, send_file
+from flask import Flask, render_template, send_file, request
 from routes.filters_routes import filters_blueprint
 import pandas as pd
 
@@ -84,6 +84,16 @@ def summary_tipo(tipo):
         summary_data=df.to_dict(orient="records"),
         tipo=tipo
     )
+
+
+@app.route("/spread")
+def spread():
+    tipo = request.args.get("tipo", "di").lower()
+    if tipo not in ["di", "ipca"]:
+        tipo = "di"
+    chart_path = f"static/{tipo}_spread_surface.html"
+    return render_template("spread_iframe.html", chart=chart_path, tipo=tipo)
+
 
 
 
