@@ -136,22 +136,21 @@ def show_di_summary_table(df: pd.DataFrame) -> go.Figure:
         title="Curva DI Interpolada – Detalhamento por Tenor e Data"
     )
     return table
-
-
 def show_ipca_summary_table(df: pd.DataFrame) -> go.Figure:
     df = df.copy()
-    df["obs_date"] = pd.to_datetime(df["obs_date"])
-    df = df.sort_values(["obs_date", "tenor"])
+    df.index.name = "obs_date"
+    df = df.reset_index().melt(id_vars="obs_date", var_name="tenor", value_name="yield")
+    df = df.dropna(subset=["yield"])
+
     df["tenor"] = df["tenor"].round(3)
     df["yield"] = df["yield"].round(3)
 
     table = go.Figure(
         data=[go.Table(
-            header=dict(values=["Data", "Contrato", "Tenor (anos)", "Yield (%)"],
+            header=dict(values=["Data", "Tenor (anos)", "Yield (%)"],
                         fill_color="lightgreen", align="left"),
             cells=dict(values=[
                 df["obs_date"].dt.strftime("%Y-%m-%d"),
-                df["generic_ticker_id"],
                 df["tenor"],
                 df["yield"]
             ],
@@ -160,6 +159,6 @@ def show_ipca_summary_table(df: pd.DataFrame) -> go.Figure:
     )
     table.update_layout(
         height=800,
-        title="Contratos WLA – Detalhamento por Tenor e Data"
+        title="Curva IDxIPCA Interpolada – Por Tenor e Data"
     )
     return table
