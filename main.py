@@ -73,7 +73,7 @@ if __name__ == "__main__":
 
         # Salvar tabela resumo da curva
         table_func = show_di_summary_table if tipo == "di" else show_ipca_summary_table
-        summary_fig = table_func(surface)
+        summary_fig = table_func(df_vis)
 
         if summary_fig is not None:
             summary_fig.write_html(f"static/{tipo}_summary_table.html")
