@@ -136,13 +136,15 @@ def show_di_summary_table(df: pd.DataFrame) -> go.Figure:
         title="Curva DI Interpolada – Detalhamento por Tenor e Data"
     )
     return table
+
+
 def show_ipca_summary_table(df: pd.DataFrame) -> go.Figure:
     df = df.copy()
     df.index.name = "obs_date"
     df = df.reset_index().melt(id_vars="obs_date", var_name="tenor", value_name="yield")
     df = df.dropna(subset=["yield"])
 
-    df["tenor"] = df["tenor"].round(3)
+    df["tenor"] = df["tenor"].astype(str)
     df["yield"] = df["yield"].round(3)
 
     table = go.Figure(
