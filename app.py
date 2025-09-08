@@ -3,9 +3,6 @@ from flask import Flask, render_template, send_file
 from routes.filters_routes import filters_blueprint
 import pandas as pd
 
-
-#surface, corp_base, yields_ts = load_inputs(CONFIG)
-
 df = pd.read_excel("data/corp_bonds_summary.xlsx")
 
 app = Flask(__name__, template_folder="templates")
@@ -76,7 +73,7 @@ def download_summary():
 @app.route("/summary/<tipo>")
 def summary_tipo(tipo):
     if tipo == "di":
-        df = pd.read_excel("data/corp_bonds_summary.xlsx")
+        df = pd.read_excel("data/corp_bonds_di_summary.xlsx")
     elif tipo == "ipca":
         df = pd.read_excel("data/corp_bonds_ipca_summary.xlsx")
     else:

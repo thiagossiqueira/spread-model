@@ -1,36 +1,34 @@
+<!-- templates/summary_full.html -->
 {% extends "shared/base.html" %}
-{% block title %}Resumo DI{% endblock %}
 
-{% block body %}
-<div class="container">
-  <h2 class="title is-4">Tabela Resumo DI</h2>
+{% block content %}
+<h2>Resumo de Spreads - {{ request.path.split('/')[-1].upper() }}</h2>
 
-  <button class="download-btn" onclick="exportTableToExcel('summaryTable')">⬇ Exportar para Excel</button>
-  <br><br>
+<a href="/summary/di" class="button is-link">DI</a>
+<a href="/summary/ipca" class="button is-success">IPCA</a>
 
-  <table id="summaryTable" class="display compact nowrap" style="width:100%">
-    <thead>
-      <tr>
-        <th>Bond ID</th>
-        <th>Obs Date</th>
-        <th>Corp Yield (%)</th>
-        <th>Tenor (yrs)</th>
-        <th>DI Yield (%)</th>
-        <th>Spread (bp)</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for row in summary_data %}
-      <tr>
-        <td>{{ row.id }}</td>
-        <td>{{ row.OBS_DATE.strftime('%Y-%m-%d') }}</td>
-        <td>{{ row.YAS_BOND_YLD | round(2) }}</td>
-        <td>{{ row.TENOR_YRS | round(2) }}</td>
-        <td>{{ row.DI_YIELD | round(2) }}</td>
-        <td>{{ row.SPREAD | round(2) }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-</div>
+<table class="table is-striped is-fullwidth mt-4">
+  <thead>
+    <tr>
+      <th>Bond ID</th>
+      <th>Obs Date</th>
+      <th>Corp Yield (%)</th>
+      <th>Tenor (yrs)</th>
+      <th>DI/IPCA Yield (%)</th>
+      <th>Spread (bp)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in summary_data %}
+    <tr>
+      <td>{{ row["Bond ID"] }}</td>
+      <td>{{ row["Obs Date"] }}</td>
+      <td>{{ row["Corp Yield (%)"] }}</td>
+      <td>{{ row["Tenor (yrs)"] }}</td>
+      <td>{{ row["DI Yield (%)"] }}</td>
+      <td>{{ row["Spread (bp)"] }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
 {% endblock %}
