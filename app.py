@@ -15,11 +15,6 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/spread")
-def spread():
-    return render_template("spread_iframe.html", chart="static/spread_surface.html")
-
-
 @app.route("/summary")
 def summary():
     return render_template("summary_iframe.html", chart="static/summary_table.html")
