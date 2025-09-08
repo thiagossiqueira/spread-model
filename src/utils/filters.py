@@ -1,4 +1,5 @@
 import pandas as pd
+from src.config import CONFIG
 
 def filter_corporate_universe(df: pd.DataFrame, inflation_linked: str = "N") -> pd.DataFrame:
     """
@@ -53,4 +54,32 @@ def anomaly_filtering_results(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
     df = df[df["YAS_BOND_YLD"] != 0]
     df = df[(df["SPREAD"] >= -10) & (df["SPREAD"] <= 10)]
+    return df
+
+
+def apply_custom_filters(df: pd.DataFrame, inflation: str, exclude_gov: bool, exclude_fin: bool,
+                         cpns: list) -> pd.DataFrame:
+    df = df.copy()
+
+    if exclude_gov:
+        df = df[~df["CLASSIFICATION_LEVEL_4_NAME"].str.startswith("Government", na=False)]
+
+    if exclude_fin:
+        df = df[~df["industry_sector"].isin(["Financial"])]
+
+    if cpns:
+        df = df[df["CPN_TYP"].isin(cpns)]
+
+    df["INFLATION_LINKED_INDICATOR"] = df["INFLATION_LINKED_INDICATOR"].astype(str).str.strip().str.upper()
+    df = df[df["INFLATION_LINKED_INDICATOR"] == inflation.strip().upper()]
+
+    return df
+
+
+def load_raw_corp_data() -> pd.DataFrame:
+    """
+    Carrega a base de dados de bonds corporativos sem aplicar filtros.
+    """
+    df = pd.read_excel(CONFIG["CORP_PATH"], sheet_name="db_values_only")
+    df["id"] = df["id"].astype(str).str.strip()
     return df
