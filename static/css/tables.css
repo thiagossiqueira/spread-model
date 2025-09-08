@@ -1,0 +1,13 @@
+/* static/css/tables.css */
+#spread-table {
+  font-size: 14px;
+}
+
+table.dataTable th,
+table.dataTable td {
+  white-space: nowrap;
+}
+
+.dt-buttons {
+  margin-bottom: 10px;
+}
