@@ -79,7 +79,12 @@ def summary_tipo(tipo):
     else:
         return "Tipo inválido", 400
 
-    return render_template("summary_full.html", summary_data=df.to_dict(orient="records"))
+    return render_template(
+        "summary_full.html",
+        summary_data=df.to_dict(orient="records"),
+        tipo=tipo
+    )
+
 
 
 if __name__ == "__main__":

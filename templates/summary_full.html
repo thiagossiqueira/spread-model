@@ -1,34 +1,55 @@
-<!-- templates/summary_full.html -->
 {% extends "shared/base.html" %}
 
 {% block content %}
-<h2>Resumo de Spreads - {{ request.path.split('/')[-1].upper() }}</h2>
+<h2 class="title is-4">Resumo de Spreads – {{ tipo.upper() }}</h2>
 
-<a href="/summary/di" class="button is-link">DI</a>
-<a href="/summary/ipca" class="button is-success">IPCA</a>
+<div class="buttons mb-4">
+  <a href="/summary/di" class="button is-link">DI</a>
+  <a href="/summary/ipca" class="button is-success">IPCA</a>
+</div>
 
-<table class="table is-striped is-fullwidth mt-4">
-  <thead>
-    <tr>
-      <th>Bond ID</th>
-      <th>Obs Date</th>
-      <th>Corp Yield (%)</th>
-      <th>Tenor (yrs)</th>
-      <th>DI/IPCA Yield (%)</th>
-      <th>Spread (bp)</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for row in summary_data %}
-    <tr>
-      <td>{{ row["Bond ID"] }}</td>
-      <td>{{ row["Obs Date"] }}</td>
-      <td>{{ row["Corp Yield (%)"] }}</td>
-      <td>{{ row["Tenor (yrs)"] }}</td>
-      <td>{{ row["DI Yield (%)"] }}</td>
-      <td>{{ row["Spread (bp)"] }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="table-container">
+  <table id="spread-table" class="table is-striped is-hoverable is-fullwidth">
+    <thead>
+      <tr>
+        <th>Bond ID</th>
+        <th>Obs Date</th>
+        <th>Corp Yield (%)</th>
+        <th>Tenor (yrs)</th>
+        <th>{{ "DI" if tipo == "di" else "IPCA" }} Yield (%)</th>
+        <th>Spread (bp)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in summary_data %}
+      <tr>
+        <td>{{ row["Bond ID"] }}</td>
+        <td>{{ row["Obs Date"] }}</td>
+        <td>{{ row["Corp Yield (%)"] }}</td>
+        <td>{{ row["Tenor (yrs)"] }}</td>
+        <td>{{ row["DI Yield (%)"] }}</td>
+        <td>{{ row["Spread (bp)"] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<script>
+  $(document).ready(function () {
+    $('#spread-table').DataTable({
+      paging: true,
+      searching: true,
+      order: [[1, "desc"]],  // default sort by date descending
+      language: {
+        url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json'
+      }
+    });
+  });
+</script>
 {% endblock %}

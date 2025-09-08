@@ -32,7 +32,7 @@ def load_di_surface(path):
     if "volume" in curve_df.columns:
         surface["volume"] = pd.to_numeric(curve_df["volume"], errors="coerce")
         surface = surface.dropna(subset=["volume"])
-        surface = surface[surface["volume"] > 0]
+        surface = surface[surface["volume"] > 1000]
 
     surface = surface.dropna(subset=["yield", "tenor"])
     surface = surface[surface["yield"] > 0]
