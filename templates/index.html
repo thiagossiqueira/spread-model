@@ -1,23 +1,98 @@
 <!-- templates/index.html -->
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Modelo de Spreads</title>
-</head>
-<body>
-  <h2>Bienvenido al modelo de spreads de bonos corporativos</h2>
-  <ul>
+{% extends "shared/base.html" %}
 
-    <li><a href="/spread">Ver gráfico 3D de spreads</a></li>
-    <li><a href="/summary">Ver tabla resumen Spread</a></li>
+{% block title %}Home | Modelo de Spreads{% endblock %}
 
-    <li><a href="/di-surface">Ver gráfico 3D del Yield DI</a></li>
-    <li><a href="/di-summary">Ver tabla resumen DI</a></li>
+{% block head %}
+  <link rel="stylesheet" href="/static/css/index.css">
+{% endblock %}
 
-    <li><a href="/wla-surface">Ver gráfico 3D do Yield WLA</a></li>
-    <li><a href="/wla-summary">Ver tabela resumo WLA</a></li>
+{% block body %}
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="/">
+      <div class="logo"></div>
+      <span>Modelo de Spreads</span>
+    </a>
+    <ul>
+      <li><a href="/spread" class="btn-primary">Spreads 3D</a></li>
+      <li><a href="/summary">Resumen Spread</a></li>
+      <li><a href="/di-surface">DI 3D</a></li>
+      <li><a href="/di-summary">Resumen DI</a></li>
+      <li><a href="/wla-surface">WLA 3D</a></li>
+      <li><a href="/wla-summary">Resumen WLA</a></li>
+    </ul>
+  </div>
+</header>
 
-  </ul>
-</body>
-</html>
+<section class="hero">
+  <p class="subtitle">1993–2025 · Brasil · Deuda corporativa en BRL</p>
+  <h1>Bienvenido al modelo de spreads de bonos corporativos</h1>
+  <div class="quick">
+    <a href="/spread">Ver Spreads 3D</a>
+    <a href="/summary">Tabla de Spreads</a>
+    <a href="/di-surface">DI 3D</a>
+    <a href="/wla-surface">WLA 3D</a>
+  </div>
+</section>
+
+<main>
+  <div class="grid">
+    <article class="card span-7">
+      <h3>Resumen del estudio</h3>
+      <p>
+        Este trabajo analiza los <strong>determinantes de los spreads de deuda corporativa</strong> en Brasil entre 1993 y 2025,
+        enfocado en el mercado local en reales. El spread se define como la diferencia entre el
+        <em>yield to maturity</em> del bono corporativo y el rendimiento de una referencia soberana o libre de riesgo de igual plazo:
+        <strong>Spread<sub>i,t</sub> = YTM<sub>corp,i,t</sub> − YTM<sub>gov,t</sub></strong>.
+      </p>
+      <p class="muted">
+        Los spreads reflejan prima por riesgo de default, iliquidez y otros factores idiosincráticos, además de componentes
+        sistémicos propios de economías emergentes: riesgo soberano, condiciones financieras globales y el entorno macro
+        doméstico.
+      </p>
+      <div class="actions">
+        <a class="pill" href="/summary">Explorar tabla resumen</a>
+        <a class="pill" href="/spread">Explorar superficie 3D</a>
+      </div>
+    </article>
+
+    <aside class="card span-5">
+      <h3>Determinantes y canales</h3>
+      <ul class="list">
+        <li><strong>Globales:</strong> liquidez internacional, tasas externas, apetito por riesgo, shocks externos.</li>
+        <li><strong>Soberanos:</strong> riesgo país, curva de referencia, credibilidad fiscal y monetaria.</li>
+        <li><strong>Macroeconómicos:</strong> inflación, brecha del producto, tipo de cambio, prima de plazo.</li>
+        <li><strong>Idiosincráticos:</strong> riesgo de firma, sector, duración, covenants, liquidez del bono.</li>
+      </ul>
+      <p class="muted">
+        Hipótesis: shocks globales y soberanos afectan el nivel de spreads; los factores macro locales ajustan pendiente y curvatura.
+      </p>
+    </aside>
+
+    <section class="card span-6">
+      <h3>Visualizaciones disponibles</h3>
+      <ul class="list">
+        <li><a href="/spread">Gráfico 3D de Spreads</a> — Superficie por fecha y plazo.</li>
+        <li><a href="/summary">Tabla resumen Spread</a> — Estadísticas clave y filtros.</li>
+        <li><a href="/di-surface">Gráfico 3D DI</a> — Curva de interés soberana.</li>
+        <li><a href="/di-summary">Tabla resumen DI</a> — Incluye niveles y pendiente.</li>
+        <li><a href="/wla-surface">Gráfico 3D IPCA (WLA)</a> — Contratos indexados a IPCA.</li>
+        <li><a href="/wla-summary">Tabla resumen WLA</a> — Contratos ID x IPCA.</li>
+      </ul>
+    </section>
+
+    <section class="card span-6">
+      <h3>Nota metodológica</h3>
+      <p>
+        El modelo utiliza <em>yields</em> punto en el tiempo y factores estructurales para analizar la sensibilidad de los spreads.
+        Cubre eventos de crisis, reformas estructurales y el desarrollo del mercado corporativo en reales.
+      </p>
+    </section>
+  </div>
+</main>
+
+<footer>
+  © 1993–2025 · Proyecto académico · Brasil – Spreads corporativos (BRL)
+</footer>
+{% endblock %}
