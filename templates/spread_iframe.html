@@ -1,7 +1,6 @@
-<!-- templates/spread_iframe.html -->
 {% extends "shared/base.html" %}
 
-{% block title %}Spreads 3D - {{ tipo | upper }}{% endblock %}
+{% block title %}Gráfico de Spreads - {{ tipo.upper() }}{% endblock %}
 
 {% block head %}
   <style>
@@ -14,6 +13,6 @@
 {% endblock %}
 
 {% block body %}
-  <h2>Gráfico 3D: Spread vs {{ "DI" if tipo == "di" else "IPCA" }}</h2>
-  <iframe src="/{{ chart }}" title="Gráfico de Spreads {{ tipo | upper }}"></iframe>
+  <h2 style="margin: 20px;">Gráfico 3D: Spreads vs. {{ tipo.upper() }}</h2>
+  <iframe src="/{{ chart }}" title="Gráfico de Spreads {{ tipo.upper() }}"></iframe>
 {% endblock %}

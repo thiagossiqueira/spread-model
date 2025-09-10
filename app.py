@@ -14,23 +14,13 @@ def index():
 
 
 @app.route("/summary")
-def summary_tipo():
+def summary():
     tipo = request.args.get("tipo", "di").lower()
     if tipo not in ["di", "ipca"]:
         tipo = "di"
+    chart_path = f"static/{tipo}_summary_table.html"
+    return render_template("summary_iframe.html", chart=chart_path, tipo=tipo)
 
-    summary_file = f"data/corp_bonds_{tipo}_summary.xlsx"
-
-    try:
-        df = pd.read_excel(summary_file)
-    except FileNotFoundError:
-        return f"Arquivo não encontrado: {summary_file}", 404
-
-    return render_template(
-        "summary_full.html",
-        summary_data=df.to_dict(orient="records"),
-        tipo=tipo
-    )
 
 
 @app.route("/di-surface")
@@ -80,7 +70,6 @@ def spread():
     tipo = request.args.get("tipo", "di").lower()
     if tipo not in ["di", "ipca"]:
         tipo = "di"
-
     chart_path = f"static/{tipo}_spread_surface.html"
     return render_template("spread_iframe.html", chart=chart_path, tipo=tipo)
 
