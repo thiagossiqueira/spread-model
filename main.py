@@ -57,24 +57,24 @@ if __name__ == "__main__":
 
         obs_windows = build_observation_windows(corp_base, yields_ts, CONFIG["OBS_WINDOW"])
 
-        if tipo == "di":
-            yc_table = interpolate_di_surface(surface, tenors)
-        else:
-            yc_table = interpolate_surface(surface, tenors)
+        yc_table = (
+            interpolate_di_surface(surface, tenors)
+            if tipo == "di"
+            else interpolate_surface(surface, tenors)
+        )
 
         df_vis = yc_table[[k for k, _ in sorted(tenors.items(), key=lambda x: x[1]) if k in yc_table.columns]]
 
-        # Gerar gráfico da superfície
+        # Gráfico da curva interpolada
         surface_fig = plot_yield_curve_surface(
             df_vis,
             source_text=f"Source: {'DI' if tipo == 'di' else 'WLA'} B3 – cálculos próprios"
         )
         surface_fig.write_html(f"static/{tipo}_surface.html")
 
-        # Salvar tabela resumo da curva
+        # Tabela resumo da curva
         table_func = show_di_summary_table if tipo == "di" else show_ipca_summary_table
         summary_fig = table_func(df_vis)
-
         if summary_fig is not None:
             summary_fig.write_html(f"static/{tipo}_summary_table.html")
 
@@ -85,14 +85,12 @@ if __name__ == "__main__":
         corp_bonds = anomaly_filtering_results(corp_bonds)
         print(f"🧼 Após remover anomalias: {len(corp_bonds)}")
 
-        # Exportar tabela resumo em Excel
+        # Salvar como Excel
         df_excel = corp_bonds[["id", "OBS_DATE", "YAS_BOND_YLD", "TENOR_YRS", "DI_YIELD", "SPREAD"]].copy()
-        df_excel.columns = [
-            "Bond ID", "Obs Date", "Corp Yield (%)", "Tenor (yrs)", "DI Yield (%)", "Spread (bp)"
-        ]
+        df_excel.columns = ["Bond ID", "Obs Date", "Corp Yield (%)", "Tenor (yrs)", "DI Yield (%)", "Spread (bp)"]
         df_excel.to_excel(f"data/corp_bonds_{tipo}_summary.xlsx", index=False)
 
-        # Superfície de spreads
+        # Superfície de spreads 3D
         spread_surface = corp_bonds.pivot_table(
             index="OBS_DATE",
             columns="TENOR_BUCKET",
@@ -111,14 +109,14 @@ if __name__ == "__main__":
             zmin=-200,
             zmax=2000,
         )
-        fig.write_html(f"static/{tipo}_spread_surface.html")
+        fig.write_html(f"static/{tipo}_spread_surface.html")  # ✅ este é o que faltava inicialmente
 
-        # Tabela resumo visual
+        # Tabela de auditoria
         table_fig = show_summary_table(corp_bonds)
         if table_fig is not None:
             table_fig.write_html(f"static/summary_{tipo.upper()}_table.html")
 
-        # Exportar skips
+        # Exportar observações ignoradas
         pd.DataFrame(skipped, columns=["Bond ID", "Obs Date", "Reason"]).to_csv(
             f"data/skipped_{tipo}_yields.csv", index=False
         )
