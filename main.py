@@ -57,6 +57,7 @@ if __name__ == "__main__":
 
         obs_windows = build_observation_windows(corp_base, yields_ts, CONFIG["OBS_WINDOW"])
 
+        # Interpolação
         yc_table = (
             interpolate_di_surface(surface, tenors)
             if tipo == "di"
@@ -64,6 +65,7 @@ if __name__ == "__main__":
         )
 
         df_vis = yc_table[[k for k, _ in sorted(tenors.items(), key=lambda x: x[1]) if k in yc_table.columns]]
+        df_vis.index.name = "obs_date"  # ✅ Correção para evitar erro silencioso
 
         # Gráfico da curva interpolada
         surface_fig = plot_yield_curve_surface(
@@ -76,7 +78,10 @@ if __name__ == "__main__":
         table_func = show_di_summary_table if tipo == "di" else show_ipca_summary_table
         summary_fig = table_func(df_vis)
         if summary_fig is not None:
-            summary_fig.write_html(f"static/{tipo}_summary_table.html")
+            summary_fig.write_html(f"static/{tipo}_summary_table.html", include_plotlyjs="cdn")
+            print(f"✅ {tipo}_summary_table.html salvo com sucesso.")
+        else:
+            print(f"⚠️ {tipo}_summary_table.html não foi gerado.")
 
         # Calcular spreads
         corp_bonds, skipped = compute_spreads(corp_base, yields_ts, yc_table, obs_windows, tenors)
@@ -109,7 +114,7 @@ if __name__ == "__main__":
             zmin=-200,
             zmax=2000,
         )
-        fig.write_html(f"static/{tipo}_spread_surface.html")  # ✅ este é o que faltava inicialmente
+        fig.write_html(f"static/{tipo}_spread_surface.html")
 
         # Tabela de auditoria
         table_fig = show_summary_table(corp_bonds)
