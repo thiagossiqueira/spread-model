@@ -3,8 +3,6 @@ from flask import Flask, render_template, send_file, request
 from routes.filters_routes import filters_blueprint
 import pandas as pd
 
-df = pd.read_excel("data/corp_bonds_summary.xlsx")
-
 app = Flask(__name__, template_folder="templates")
 
 app.register_blueprint(filters_blueprint)
@@ -16,8 +14,23 @@ def index():
 
 
 @app.route("/summary")
-def summary():
-    return render_template("summary_iframe.html", chart="static/summary_table.html")
+def summary_tipo():
+    tipo = request.args.get("tipo", "di").lower()
+    if tipo not in ["di", "ipca"]:
+        tipo = "di"
+
+    summary_file = f"data/corp_bonds_{tipo}_summary.xlsx"
+
+    try:
+        df = pd.read_excel(summary_file)
+    except FileNotFoundError:
+        return f"Arquivo não encontrado: {summary_file}", 404
+
+    return render_template(
+        "summary_full.html",
+        summary_data=df.to_dict(orient="records"),
+        tipo=tipo
+    )
 
 
 @app.route("/di-surface")
@@ -43,9 +56,7 @@ def show_wla_summary():
 @app.route("/summary-full")
 def summary_full():
     df = pd.read_excel("data/corp_bonds_summary.xlsx")
-    corp_bonds = df  # já está filtrado e renomeado
-
-    return render_template("summary_full.html", summary_data=corp_bonds.to_dict(orient="records"))
+    return render_template("summary_full.html", summary_data=df.to_dict(orient="records"))
 
 
 @app.route("/wla-summary-full")
@@ -65,21 +76,6 @@ def download_summary():
     )
 
 
-@app.route("/summary/<tipo>")
-def summary_tipo(tipo):
-    if tipo == "di":
-        df = pd.read_excel("data/corp_bonds_di_summary.xlsx")
-    elif tipo == "ipca":
-        df = pd.read_excel("data/corp_bonds_ipca_summary.xlsx")
-    else:
-        return "Tipo inválido", 400
-
-    return render_template(
-        "summary_full.html",
-        summary_data=df.to_dict(orient="records"),
-        tipo=tipo
-    )
-
 @app.route("/spread")
 def spread():
     tipo = request.args.get("tipo", "di").lower()
@@ -95,7 +91,6 @@ def spread():
         chart_html = f"<p>Gráfico não encontrado para o tipo <strong>{tipo}</strong>.</p>"
 
     return render_template("spread_embed.html", chart_html=chart_html, tipo=tipo)
-
 
 
 if __name__ == "__main__":
