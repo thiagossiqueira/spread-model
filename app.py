@@ -75,22 +75,14 @@ def download_summary():
         mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
 
-
 @app.route("/spread")
 def spread():
     tipo = request.args.get("tipo", "di").lower()
     if tipo not in ["di", "ipca"]:
         tipo = "di"
 
-    chart_file = f"static/{tipo}_spread_surface.html"
-
-    try:
-        with open(chart_file, "r", encoding="utf-8") as f:
-            chart_html = f.read()
-    except FileNotFoundError:
-        chart_html = f"<p>Gráfico não encontrado para o tipo <strong>{tipo}</strong>.</p>"
-
-    return render_template("spread_embed.html", chart_html=chart_html, tipo=tipo)
+    chart_path = f"static/{tipo}_spread_surface.html"
+    return render_template("spread_iframe.html", chart=chart_path, tipo=tipo)
 
 
 if __name__ == "__main__":
