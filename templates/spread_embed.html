@@ -1,0 +1,12 @@
+{% extends "shared/base.html" %}
+
+{% block title %}Spreads 3D — {{ tipo | upper }}{% endblock %}
+
+{% block body %}
+  <div class="container">
+    <h2>Spreads 3D – {{ tipo | upper }}</h2>
+    <div class="chart-container">
+      {{ chart_html | safe }}
+    </div>
+  </div>
+{% endblock %}

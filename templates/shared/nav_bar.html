@@ -1,9 +1,21 @@
-<nav>
+<header class="nav" role="navigation" aria-label="Principal">
+  <div class="wrap">
+    <a class="brand" href="/">
+      <div class="logo" aria-hidden="true"></div>
+      <span>Modelo de Spreads</span>
+    </a>
     <ul>
-        <li><a href="{{ url_for('index') }}">Início</a></li>
-        <li><a href="{{ url_for('summary') }}">Superficie de contractos de DI (ODA Comdty)</a></li>
-        <li><a href="{{ url_for('show_wla_summary') }}">Superficie de contractos de Inflacion / IPCA (WLA Index)</a></li>
-        <li><a href="/summary/di">Dif. entre los contractos ODA (Surface) y los bonos vinculados al DI</a></li>
-        <li><a href="/summary/ipca">Dif. entre los contractos WLA (Surface) y los bonos vinculados a la inflación IPCA</a></li>
+      <!-- Toggle entre gráficos DI e IPCA -->
+      <li><a href="/spread?tipo=di" title="Gráfico 3D de Spreads DI">Spreads DI</a></li>
+      <li><a href="/spread?tipo=ipca" title="Gráfico 3D de Spreads IPCA">Spreads IPCA</a></li>
+
+      <!-- Entradas adicionais -->
+      <li><a href="/summary?tipo=di" title="Tabela DI">Resumo DI</a></li>
+      <li><a href="/summary?tipo=ipca" title="Tabela IPCA">Resumo IPCA</a></li>
+
+      <li><a href="/di-surface" title="Curva DI 3D">DI 3D</a></li>
+      <li><a href="/wla-surface" title="Curva WLA 3D">WLA 3D</a></li>
     </ul>
-</nav>
+  </div>
+</header>
+
