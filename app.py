@@ -21,12 +21,9 @@ def summary():
     chart_path = f"static/{tipo}_summary_table.html"
     return render_template("summary_iframe.html", chart=chart_path, tipo=tipo)
 
-
-
 @app.route("/di-surface")
 def show_di_surface():
-    return render_template("spread_iframe.html", chart="static/di_surface.html")
-
+    return render_template("spread_iframe.html", chart="static/di_surface.html", tipo="di")
 
 @app.route("/di-summary")
 def di_summary():
@@ -35,8 +32,7 @@ def di_summary():
 
 @app.route("/wla-surface")
 def show_wla_surface():
-    return render_template("spread_iframe.html", chart="static/ipca_surface.html")
-
+    return render_template("spread_iframe.html", chart="static/ipca_surface.html", tipo="ipca")
 
 @app.route("/wla-summary")
 def show_wla_summary():
