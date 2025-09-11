@@ -1,18 +1,10 @@
 {% extends "shared/base.html" %}
 
-{% block title %}Resumo - {{ tipo.upper() }}{% endblock %}
-
-{% block head %}
-  <style>
-    iframe {
-      width: 100%;
-      height: 85vh;
-      border: none;
-    }
-  </style>
-{% endblock %}
+{% block title %}Resumo - {{ tipo | upper }}{% endblock %}
 
 {% block body %}
-  <h2 style="margin: 20px;">Tabela Resumo: {{ tipo.upper() }}</h2>
-  <iframe src="/{{ chart }}" title="Tabela Resumo {{ tipo.upper() }}"></iframe>
+  <div class="container">
+    <h2>Tabela Resumo – {{ tipo | upper }}</h2>
+    <iframe src="{{ chart }}" width="100%" height="800" frameborder="0"></iframe>
+  </div>
 {% endblock %}
