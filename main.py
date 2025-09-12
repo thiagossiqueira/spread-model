@@ -72,13 +72,13 @@ if __name__ == "__main__":
             df_vis,
             source_text=f"Source: {'DI' if tipo == 'di' else 'WLA'} B3 – cálculos próprios"
         )
-        surface_fig.write_html(f"static/{tipo}_surface.html")
+        surface_fig.write_html(f"templates/{tipo}_surface.html")
 
         # Tabela resumo da curva
         table_func = show_di_summary_table if tipo == "di" else show_ipca_summary_table
         summary_fig = table_func(df_vis)
         if summary_fig is not None:
-            summary_fig.write_html(f"static/{tipo}_summary_table.html", include_plotlyjs="cdn")
+            summary_fig.write_html(f"templates/{tipo}_summary_table.html", include_plotlyjs="cdn")
             print(f"✅ {tipo}_summary_table.html salvo com sucesso.")
         else:
             print(f"⚠️ {tipo}_summary_table.html não foi gerado.")
@@ -114,12 +114,12 @@ if __name__ == "__main__":
             zmin=-200,
             zmax=2000,
         )
-        fig.write_html(f"static/{tipo}_spread_surface.html")
+        fig.write_html(f"templates/{tipo}_spread_surface.html")
 
         # Tabela de auditoria
         table_fig = show_summary_table(corp_bonds)
         if table_fig is not None:
-            table_fig.write_html(f"static/summary_{tipo.upper()}_table.html")
+            table_fig.write_html(f"templates/summary_{tipo.upper()}_table.html")
 
         # Exportar observações ignoradas
         pd.DataFrame(skipped, columns=["Bond ID", "Obs Date", "Reason"]).to_csv(
