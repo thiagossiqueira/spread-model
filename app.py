@@ -6,18 +6,22 @@ import os
 app = Flask(__name__, template_folder="templates")
 app.register_blueprint(filters_blueprint)
 
+
+# ----------- PÁGINA INICIAL ------------------------
 @app.route("/")
 def index():
     return render_template("index.html")
 
-# ----------- SPREADS SUPERFICIE 3D ---------------------
+
+# ----------- SPREADS SUPERFÍCIE 3D -----------------
 @app.route("/spread/<prefixo>")
 def spread(prefixo):
     if prefixo not in ["di", "ipca"]:
         prefixo = "di"
-    return render_template(f"{prefixo}_spread_surface.html")
+    return send_file(f"data/{prefixo}_spread_surface.html")
 
-# ----------- TABELAS DOS SPREADS ---------------------
+
+# ----------- TABELAS DOS SPREADS ------------------
 @app.route("/spread-table/<prefixo>")
 def spread_table(prefixo):
     file_map = {
@@ -26,42 +30,46 @@ def spread_table(prefixo):
     }
     if prefixo not in file_map:
         prefixo = "di"
-    chart_path = f"static/{file_map[prefixo]}"
-    return render_template("summary_iframe.html", chart=chart_path, tipo=prefixo)
+    return send_file(f"data/{file_map[prefixo]}")
 
-# ----------- TABELAS DAS CURVAS INTERPOLADAS ----------
-@app.route("/summary-table/<prefixo>")
-def summary_table(prefixo):
+
+# ----------- TABELAS DAS CURVAS INTERPOLADAS ------
+@app.route("/summary/<prefixo>")
+def summary(prefixo):
     if prefixo == "di":
-        return render_template("summary_DI_table.html")
+        return send_file("data/di_summary_table.html")
     elif prefixo == "ipca":
-        return render_template("summary_IPCA_table.html")
+        return send_file("data/ipca_summary_table.html")
     else:
         return "Tipo inválido", 400
 
-# ----------- CURVAS DI e IPCA (WLA) -------------------
+
+# ----------- CURVAS DI e IPCA (WLA) ----------------
 @app.route("/surface/<prefixo>")
 def surface(prefixo):
     if prefixo == "di":
-        return render_template("di_surface.html")
+        return send_file("data/di_surface.html")
     elif prefixo == "ipca":
-        return render_template("ipca_surface.html")
+        return send_file("data/ipca_surface.html")
     else:
         return "Tipo inválido", 400
 
-# ----------- FULL TABLES (Opcional) --------------------
+
+# ----------- FULL TABLES (Opcional) ----------------
 @app.route("/summary-full")
 def summary_full():
     df = pd.read_excel("data/corp_bonds_summary.xlsx")
     return render_template("summary_full.html", summary_data=df.to_dict(orient="records"))
 
+
 @app.route("/wla-summary-full")
 def wla_summary_full():
-    with open("static/ipca_summary_table.html") as f:
+    with open("data/ipca_summary_table.html") as f:
         content = f.read()
     return render_template("ipca_summary_full.html", table_html=content)
 
-# ----------- DOWNLOAD ------------------------------
+
+# ----------- DOWNLOAD DE EXCEL ---------------------
 @app.route("/download-summary")
 def download_summary():
     return send_file(
