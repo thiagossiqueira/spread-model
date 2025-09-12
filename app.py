@@ -18,7 +18,7 @@ def index():
 def spread(prefixo):
     if prefixo not in ["di", "ipca"]:
         prefixo = "di"
-    return send_file(f"data/{prefixo}_spread_surface.html")
+    return send_file(f"templates/{prefixo}_spread_surface.html")
 
 
 # ----------- TABELAS DOS SPREADS ------------------
@@ -30,16 +30,16 @@ def spread_table(prefixo):
     }
     if prefixo not in file_map:
         prefixo = "di"
-    return send_file(f"data/{file_map[prefixo]}")
+    return send_file(f"templates/{file_map[prefixo]}")
 
 
 # ----------- TABELAS DAS CURVAS INTERPOLADAS ------
 @app.route("/summary/<prefixo>")
 def summary(prefixo):
     if prefixo == "di":
-        return send_file("data/di_summary_table.html")
+        return send_file("templates/di_summary_table.html")
     elif prefixo == "ipca":
-        return send_file("data/ipca_summary_table.html")
+        return send_file("templates/ipca_summary_table.html")
     else:
         return "Tipo inválido", 400
 
@@ -48,9 +48,9 @@ def summary(prefixo):
 @app.route("/surface/<prefixo>")
 def surface(prefixo):
     if prefixo == "di":
-        return send_file("data/di_surface.html")
+        return send_file("templates/di_surface.html")
     elif prefixo == "ipca":
-        return send_file("data/ipca_surface.html")
+        return send_file("templates/ipca_surface.html")
     else:
         return "Tipo inválido", 400
 
@@ -64,7 +64,7 @@ def summary_full():
 
 @app.route("/wla-summary-full")
 def wla_summary_full():
-    with open("data/ipca_summary_table.html") as f:
+    with open("templates/ipca_summary_table.html") as f:
         content = f.read()
     return render_template("ipca_summary_full.html", table_html=content)
 
