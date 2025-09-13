@@ -78,23 +78,24 @@ def wla_summary_full():
 
 
 # ----------- DOWNLOAD DE EXCEL ---------------------
-@app.route("/download-di-summary")
-def download_summary():
-    return send_file(
-        "data/corp_bonds_di_summary.xlsx",
-        download_name="corp_bonds_di_summary.xlsx",
-        as_attachment=True,
-        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
-@app.route("/download-ipca-summary")
-def download_summary():
-    return send_file(
-        "data/corp_bonds_ipca_summary.xlsx",
-        download_name="corp_bonds_ipca_summary.xlsx",
-        as_attachment=True,
-        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
-
+@app.route("/download/<prefixo>")
+def download(prefixo):
+    if prefixo == "di":
+        return send_file(
+            "data/corp_bonds_di_summary.xlsx",
+            download_name="corp_bonds_di_summary.xlsx",
+            as_attachment=True,
+            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+    elif prefixo == "ipca":
+        return send_file(
+            "data/corp_bonds_ipca_summary.xlsx",
+            download_name="corp_bonds_ipca_summary.xlsx",
+            as_attachment=True,
+            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+    else:
+        return "Tipo inválido", 400
 
 if __name__ == "__main__":
     app.run(debug=True)
