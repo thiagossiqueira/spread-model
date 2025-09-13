@@ -20,10 +20,11 @@ from src.config import CONFIG
 
 import pandas as pd
 import os
+import io
 
 if __name__ == "__main__":
     os.makedirs("data", exist_ok=True)
-    os.makedirs("static", exist_ok=True)
+    os.makedirs("templates", exist_ok=True)
 
     corp_base_raw = load_corp_bond_data(CONFIG["CORP_PATH"])
 
@@ -43,7 +44,9 @@ if __name__ == "__main__":
     }
 
     for tipo, params in universes.items():
-        print(f"\n📊 Processando universo: {tipo.upper()}")
+        buffer = io.StringIO()
+        print(f"\n📊 Processando universo: {tipo.upper()}", file=buffer)
+
         surface = params["surface"]
         tenors = params["tenors"]
         yields_ts = params["yields_ts"]
@@ -53,11 +56,10 @@ if __name__ == "__main__":
         corp_base = corp_base[corp_base["id"].isin(yields_ts.columns)]
         corp_base = filter_corporate_universe(corp_base, inflation_linked=inflation_linked)
 
-        print(f"🧮 Bonds disponíveis após filtro ({tipo}): {len(corp_base)}")
+        print(f"🧮 Bonds disponíveis após filtro ({tipo}): {len(corp_base)}", file=buffer)
 
         obs_windows = build_observation_windows(corp_base, yields_ts, CONFIG["OBS_WINDOW"])
 
-        # Interpolação
         yc_table = (
             interpolate_di_surface(surface, tenors)
             if tipo == "di"
@@ -65,7 +67,7 @@ if __name__ == "__main__":
         )
 
         df_vis = yc_table[[k for k, _ in sorted(tenors.items(), key=lambda x: x[1]) if k in yc_table.columns]]
-        df_vis.index.name = "obs_date"  # ✅ Correção para evitar erro silencioso
+        df_vis.index.name = "obs_date"
 
         # Gráfico da curva interpolada
         surface_fig = plot_yield_curve_surface(
@@ -79,23 +81,23 @@ if __name__ == "__main__":
         summary_fig = table_func(df_vis)
         if summary_fig is not None:
             summary_fig.write_html(f"templates/{tipo}_summary_table.html", include_plotlyjs="cdn")
-            print(f"✅ {tipo}_summary_table.html salvo com sucesso.")
+            print(f"✅ {tipo}_summary_table.html salvo com sucesso.", file=buffer)
         else:
-            print(f"⚠️ {tipo}_summary_table.html não foi gerado.")
+            print(f"⚠️ {tipo}_summary_table.html não foi gerado.", file=buffer)
 
         # Calcular spreads
         corp_bonds, skipped = compute_spreads(corp_base, yields_ts, yc_table, obs_windows, tenors)
-        print(f"🧮 Spreads calculados ({tipo.upper()}): {len(corp_bonds)} | Ignorados: {len(skipped)}")
+        print(f"🧮 Spreads calculados ({tipo.upper()}): {len(corp_bonds)} | Ignorados: {len(skipped)}", file=buffer)
 
         corp_bonds = anomaly_filtering_results(corp_bonds)
-        print(f"🧼 Após remover anomalias: {len(corp_bonds)}")
+        print(f"🧼 Após remover anomalias: {len(corp_bonds)}", file=buffer)
 
-        # Salvar como Excel
+        # Exportar .xlsx
         df_excel = corp_bonds[["id", "OBS_DATE", "YAS_BOND_YLD", "TENOR_YRS", "DI_YIELD", "SPREAD"]].copy()
         df_excel.columns = ["Bond ID", "Obs Date", "Corp Yield (%)", "Tenor (yrs)", "DI Yield (%)", "Spread (bp)"]
         df_excel.to_excel(f"data/corp_bonds_{tipo}_summary.xlsx", index=False)
 
-        # Superfície de spreads 3D
+        # Superfície de spreads
         spread_surface = corp_bonds.pivot_table(
             index="OBS_DATE",
             columns="TENOR_BUCKET",
@@ -116,7 +118,7 @@ if __name__ == "__main__":
         )
         fig.write_html(f"templates/{tipo}_spread_surface.html")
 
-        # Tabela de auditoria
+        # Auditoria
         table_fig = show_summary_table(corp_bonds)
         if table_fig is not None:
             table_fig.write_html(f"templates/summary_{tipo.upper()}_table.html")
@@ -125,3 +127,7 @@ if __name__ == "__main__":
         pd.DataFrame(skipped, columns=["Bond ID", "Obs Date", "Reason"]).to_csv(
             f"data/skipped_{tipo}_yields.csv", index=False
         )
+
+        # Salvar log para exibição no index
+        with open(f"data/logs_{tipo}.txt", "w", encoding="utf-8") as log_file:
+            log_file.write(buffer.getvalue())

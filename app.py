@@ -10,8 +10,16 @@ app.register_blueprint(filters_blueprint)
 # ----------- PÁGINA INICIAL ------------------------
 @app.route("/")
 def index():
-    return render_template("index.html")
-
+    logs_di = logs_ipca = ""
+    try:
+        with open("data/logs_di.txt", "r", encoding="utf-8") as f:
+            logs_di = f.read()
+        with open("data/logs_ipca.txt", "r", encoding="utf-8") as f:
+            logs_ipca = f.read()
+    except FileNotFoundError:
+        logs_di = "⚠️ Logs DI não encontrados."
+        logs_ipca = "⚠️ Logs IPCA não encontrados."
+    return render_template("index.html", logs_di=logs_di, logs_ipca=logs_ipca)
 
 # ----------- SPREADS SUPERFÍCIE 3D -----------------
 @app.route("/spread/<prefixo>")
