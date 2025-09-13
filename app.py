@@ -78,11 +78,19 @@ def wla_summary_full():
 
 
 # ----------- DOWNLOAD DE EXCEL ---------------------
-@app.route("/download-summary")
+@app.route("/download-di-summary")
 def download_summary():
     return send_file(
-        "data/corp_bonds_summary.xlsx",
-        download_name="corp_bonds_summary.xlsx",
+        "data/corp_bonds_di_summary.xlsx",
+        download_name="corp_bonds_di_summary.xlsx",
+        as_attachment=True,
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+@app.route("/download-ipca-summary")
+def download_summary():
+    return send_file(
+        "data/corp_bonds_ipca_summary.xlsx",
+        download_name="corp_bonds_ipca_summary.xlsx",
         as_attachment=True,
         mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )

@@ -9,16 +9,23 @@
 {% block content %}
 <section class="hero">
   <p class="subtitle">1993–2025 · Brasil · Deuda corporativa en BRL</p>
-  <h1>Bienvenido al modelo de spreads de bonos corporativos</h1>
+  <h1>Modelo de spreads de bonos corporativos</h1>
   <div class="quick">
-    <a href="/spread/di">Spread 3D – DI</a>
-    <a href="/spread/ipca">Spread 3D – IPCA</a>
-    <a href="/summary/di">Resumo Curva DI</a>
-    <a href="/summary/ipca">Resumo Curva IPCA</a>
-    <a href="/summary-table/di">Tabela Spread DI</a>
-    <a href="/summary-table/ipca">Tabela Spread IPCA</a>
-    <a href="/surface/di">Curva DI</a>
-    <a href="/surface/ipca">Curva IPCA</a>
+    <h3>Spreads entre bonos y contractos futuros libres de riesgo:</h3>
+    <a href="/spread/di">Chart View: Spread 3D – DI</a>
+    <a href="/spread/ipca">Chart View: Spread 3D – IPCA</a>
+
+    <a href="/summary-table/di">Table View: Spread 3D - DI</a>
+    <a href="/summary-table/ipca">Table View: Spread 3D - IPCA</a>
+    <a href="/download-di-summary">Table Download: Spread 3D - DI</a>
+    <a href="/download-ipca-summary">Table Download: Spread 3D - IPCA</a>
+
+    <h3>Superficie de Contractos futuros libres de riesgo:</h3>
+    <a href="/surface/di">Chart View: Curva - DI</a>
+    <a href="/surface/ipca">Chart View: Curva - IPCA</a>
+    <a href="/summary/di">Table View: Curva - DI</a>
+    <a href="/summary/ipca">Table View: Curva - IPCA</a>
+
   </div>
 </section>
 
@@ -29,8 +36,7 @@
       <p>
         Este trabajo analiza los <strong>determinantes de los spreads de deuda corporativa</strong> en Brasil entre 1993 y 2025,
         enfocado en el mercado local en reales. El spread se define como la diferencia entre el
-        <em>yield to maturity</em> del bono corporativo y el rendimento de uma referência soberana ou livre de risco de igual prazo:
-        <strong>Spread<sub>i,t</sub> = YTM<sub>corp,i,t</sub> − YTM<sub>gov,t</sub></strong>.
+        <em>yield to maturity</em> del bono corporativo y el rendimento de uma referência soberana ou livre de risco de igual prazo.
       </p>
       <p class="muted">
         Los spreads reflejan prima por riesgo de default, iliquidez y otros factores idiosincráticos, además de componentes
@@ -79,6 +85,6 @@
 </main>
 
 <footer>
-  © 1993–2025 · Proyecto académico · Brasil – Spreads corporativos (BRL)
+  · Proyecto académico · Brasil – Spreads corporativos (BRL)
 </footer>
 {% endblock %}
