@@ -1,16 +1,22 @@
 import pandas as pd
 from src.config import CONFIG
 
-
 def filter_corporate_universe(df: pd.DataFrame, inflation_linked: str = "N", log=None) -> pd.DataFrame:
     """
-    Aplica filtros ao universo de bonds e registra mensagens de log se fornecido.
+    Aplica os filtros padrão para selecionar o universo de bonds corporativos.
+    Permite registrar os passos em um log opcional.
     """
-    df = df.copy()
-    print_fn = (lambda *args, **kwargs: __builtins__.print(*args, **kwargs)) if log is None else (lambda *args, **kwargs: __builtins__.print(*args, file=log, **kwargs))
 
+    print_fn = (
+        (lambda *args, **kwargs: print(*args, **kwargs))
+        if log is None else
+        (lambda *args, **kwargs: print(*args, **kwargs, file=log))
+    )
+
+    df = df.copy()
     print_fn(f"🔍 Inicial: {len(df)} linhas")
 
+    # Filtros básicos
     df = df[~df['CLASSIFICATION_LEVEL_4_NAME'].str.startswith("Government", na=False)]
     print_fn(f"➡ Após remover 'Government': {len(df)}")
 
@@ -23,16 +29,20 @@ def filter_corporate_universe(df: pd.DataFrame, inflation_linked: str = "N", log
     df = df[df['CRNCY'].isin(['BRL'])]
     print_fn(f"➡ Após filtrar CRNCY='BRL': {len(df)}")
 
+    # Filtro por indexação à inflação
     df["INFLATION_LINKED_INDICATOR"] = (
         df["INFLATION_LINKED_INDICATOR"]
         .astype(str)
         .str.strip()
         .str.upper()
     )
-    print_fn("🧪 Valores únicos normalizados em INFLATION_LINKED_INDICATOR:", df["INFLATION_LINKED_INDICATOR"].unique())
+    unique_vals = df["INFLATION_LINKED_INDICATOR"].unique()
+    print_fn(f"🧪 Valores únicos normalizados em INFLATION_LINKED_INDICATOR: {unique_vals}")
+
     df = df[df["INFLATION_LINKED_INDICATOR"] == inflation_linked.strip().upper()]
     print_fn(f"➡ Após filtrar INFLATION_LINKED_INDICATOR={inflation_linked}: {len(df)}")
 
+    # TOT_DEBT_TO_EBITDA válido
     df['TOT_DEBT_TO_EBITDA'] = pd.to_numeric(df['TOT_DEBT_TO_EBITDA'], errors='coerce')
     print_fn(f"➡ Após conversão de TOT_DEBT_TO_EBITDA (com NaN): {df['TOT_DEBT_TO_EBITDA'].isna().sum()} NaNs")
 
@@ -40,11 +50,13 @@ def filter_corporate_universe(df: pd.DataFrame, inflation_linked: str = "N", log
     print_fn(f"➡ Após remover TOT_DEBT_TO_EBITDA nulos: {len(df)}")
 
     df["MATURITY"] = pd.to_datetime(df["MATURITY"], errors='coerce')
+
     return df
+
 
 def anomaly_filtering_results(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Aplica filtros para eliminar observações com yields zerados ou spreads anômalos
+    Aplica filtros para eliminar observações com yields zerados ou spreads anômalos.
     """
     df = df.copy()
     df = df[df["YAS_BOND_YLD"] != 0]
