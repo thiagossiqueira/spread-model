@@ -89,9 +89,15 @@ if __name__ == "__main__":
             # Tabela resumo da curva
             table_func = show_di_summary_table if tipo == "di" else show_ipca_summary_table
             summary_fig = table_func(df_vis)
+
             if summary_fig is not None:
-                summary_fig.write_html(f"templates/{tipo}_summary_table.html", include_plotlyjs="cdn")
-                print_fn(f"✅ {tipo}_summary_table.html salvo com sucesso.")
+                title = "Bond Yield vs DI Interpolated Yield and Spread Summary" if tipo == "di" else "Bond Yield vs IPCA Interpolated Yield and Spread Summary"
+                path = f"templates/summary_{tipo.upper()}_table.html"
+
+                summary_fig.update_layout(title_text=title)
+
+                summary_fig.write_html(path, include_plotlyjs="cdn", full_html=True)
+                print(f"✅ summary_{tipo.upper()}_table.html salvo com sucesso.")
             else:
                 print_fn(f"⚠️ {tipo}_summary_table.html não foi gerado.")
 
