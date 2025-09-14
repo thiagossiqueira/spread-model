@@ -94,6 +94,13 @@ def download(prefixo):
             as_attachment=True,
             mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
+    elif prefixo == "benchmark":
+        return send_file(
+            "data/benchmark_summary_table.xlsx",
+            download_name="benchmark_summary_table.xlsx",
+            as_attachment=True,
+            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
     else:
         return "Tipo inválido", 400
 
