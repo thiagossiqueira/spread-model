@@ -63,6 +63,14 @@
       </pre>
     </section>
 
+    <p>Nem todos os bonds resultam no relatório final de spreads calculados. Isso pode ocorrer devido a:</p>
+    <ol>
+      <li>Falta de dados de yield no <code>ya.xlsx</code> no período de observação</li>
+      <li>Ausência de curva DI/WLA para a data correspondente</li>
+      <li>Spreads extremos (fora do intervalo [-10, 10])</li>
+      <li>Problemas na interpolação (tenor_bucket ausente, janela insuficiente etc)</li>
+    </ol>
+    <p>Como resultado, a planilha final contém apenas as observações válidas.</p>
 
   </div>
 </main>
