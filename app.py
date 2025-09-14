@@ -97,5 +97,10 @@ def download(prefixo):
     else:
         return "Tipo inválido", 400
 
+@app.route("/benchmark-summary")
+def benchmark_summary():
+    return render_template("benchmark_summary_table.html")
+
+
 if __name__ == "__main__":
     app.run(debug=True)

@@ -164,3 +164,31 @@ def show_ipca_summary_table(df: pd.DataFrame) -> go.Figure:
         title="Curva IDxIPCA Interpolada – Por Tenor e Data"
     )
     return table
+
+def show_benchmark_table(df: pd.DataFrame, table_id="benchmarkTable") -> str:
+    """
+    Gera HTML interativo a partir de um DataFrame de benchmark.
+    """
+    table_html = df.to_html(index=False, classes="display nowrap", table_id=table_id, border=0)
+    return f"""
+    <html>
+    <head>
+        <title>Resumo de Benchmarks por Bond</title>
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+        <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+        <script>
+            $(document).ready(function() {{
+                $('#{table_id}').DataTable({{
+                    responsive: true,
+                    pageLength: 25
+                }});
+            }});
+        </script>
+    </head>
+    <body>
+        <h2>Resumo Final por Bond (DI e IPCA)</h2>
+        {table_html}
+    </body>
+    </html>
+    """

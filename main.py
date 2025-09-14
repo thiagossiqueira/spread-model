@@ -13,6 +13,7 @@ from src.utils.plotting import (
     show_summary_table,
     show_di_summary_table,
     show_ipca_summary_table,
+    show_benchmark_table
 )
 from src.core.windowing import build_observation_windows
 from src.core.spread_calculator import compute_spreads
@@ -143,3 +144,28 @@ if __name__ == "__main__":
             pd.DataFrame(skipped, columns=["Bond ID", "Obs Date", "Reason"]).to_csv(
                 f"data/skipped_{tipo}_yields.csv", index=False
             )
+
+    # 1. Carrega os dois resultados finais
+    df_di = pd.read_excel("data/corp_bonds_di_summary.xlsx")[["Bond ID"]].copy()
+    df_ipca = pd.read_excel("data/corp_bonds_ipca_summary.xlsx")[["Bond ID"]].copy()
+
+    df_di["Benchmark"] = "DI"
+    df_ipca["Benchmark"] = "IPCA"
+
+    df = pd.concat([df_di, df_ipca], axis=0).drop_duplicates()
+
+    # 2. Carrega metadata com múltiplas colunas desejadas
+    cols = ["id", "ISSUER", "ULT_PARENT_TICKER_EXCHANGE", "industry_group", "TOT_DEBT_TO_EBITDA", "CIE DES BULK"]
+    corp_data = load_corp_bond_data(CONFIG["CORP_PATH"])[cols].copy()
+
+    # 3. Merge com metadados
+    df = df.merge(corp_data, left_on="Bond ID", right_on="id", how="left").drop(columns="id")
+
+    # 6. Salva HTML interativo
+    html_output = show_benchmark_table(df)
+    with open("templates/benchmark_summary_table.html", "w", encoding="utf-8") as f:
+        f.write(html_output)
+
+    print("✅ benchmark_summary_table.html gerado com sucesso.")
+
+
