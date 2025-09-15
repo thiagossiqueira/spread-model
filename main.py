@@ -162,8 +162,16 @@ if __name__ == "__main__":
     df = df.merge(corp_data, left_on="Bond ID", right_on="id", how="left").drop(columns="id")
 
     # Exportar Excel
-    df_excel = df[["Bond ID", "ISSUER", "ULT_PARENT_TICKER_EXCHANGE", "industry_group", "TOT_DEBT_TO_EBITDA", "CIE DES BULK"]].copy()
-    df_excel.columns = ["Bond ID", "Emisor", "Código de Bolsa", "Setor", "Deuda/EBITDA", "Descripciones"]
+    df_excel = df[
+        ["Bond ID", "Benchmark", "ISSUER", "ULT_PARENT_TICKER_EXCHANGE",
+         "industry_group", "TOT_DEBT_TO_EBITDA", "CIE DES BULK"]
+    ].copy()
+
+    df_excel.columns = [
+        "Bond ID", "Benchmark", "Emisor", "Código de Bolsa",
+        "Setor", "Deuda/EBITDA", "Descripciones"
+    ]
+
     df_excel.to_excel(f"data/benchmark_summary_table.xlsx", index=False)
 
     # 6. Salva HTML interativo
