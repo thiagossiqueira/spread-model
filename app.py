@@ -45,12 +45,11 @@ def spread_table(prefixo):
 @app.route("/summary/<prefixo>")
 def summary(prefixo):
     if prefixo == "di":
-        return send_file("templates/di_summary_table.html")
+        return send_file("templates/summary_DI_table.html")
     elif prefixo == "ipca":
-        return send_file("templates/ipca_summary_table.html")
+        return send_file("templates/summary_IPCA_table.html")
     else:
         return "Tipo inválido", 400
-
 
 # ----------- CURVAS DI e IPCA (WLA) ----------------
 @app.route("/surface/<prefixo>")

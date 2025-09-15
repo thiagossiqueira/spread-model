@@ -104,7 +104,7 @@ def show_summary_table(corp_bonds_df: pd.DataFrame):
     )])
 
     table_fig.update_layout(
-        title="Bond Yield vs DI Interpolated Yield and Spread Summary",
+        title="Bond Yield vs Benchmark Interpolated Yield and Spread Summary",
         height=600
     )
 
