@@ -93,7 +93,7 @@ if __name__ == "__main__":
 
             if summary_fig is not None:
                 title = "Bond Yield vs DI Interpolated Yield and Spread Summary" if tipo == "di" else "Bond Yield vs IPCA Interpolated Yield and Spread Summary"
-                path = f"templates/summary_{tipo.upper()}_table.html"
+                path = f"templates/{tipo.lower()}_summary_table.html"
 
                 summary_fig.update_layout(title_text=title)
 
